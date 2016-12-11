@@ -44,8 +44,6 @@
     <Compile Include="BayesianInference\BayesianNetwork.cs" />
     <Compile Include="BayesianInference\Cpt.cs" />
     <Compile Include="BayesianInference\CptRow.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="Class2.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentCreator.cs" />
     <Compile Include="ExperimentRunner.cs" />

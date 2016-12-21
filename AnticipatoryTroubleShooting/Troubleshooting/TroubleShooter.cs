@@ -469,7 +469,10 @@ namespace AnticipatoryTroubleShooting
 
         private void cutNewIntervals(double oldFaultTime, int compID, Dictionary<int, List<Interval>> compsIntervalsDis)
         {
-            double minHop = _Tlimit / _nIntervals;
+            double minHop = (_Tlimit - oldFaultTime) / _nIntervals;
+            //double minHop = _Tlimit / _nIntervals;
+
+
             List<Interval> dist = new List<Interval>();
             double currTime = oldFaultTime;
             Interval interval;

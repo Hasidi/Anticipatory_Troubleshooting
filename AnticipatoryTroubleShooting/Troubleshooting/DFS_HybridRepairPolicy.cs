@@ -18,9 +18,8 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         double _firstInterval;
         int _compId;
         double _epsilon = 0.01;
-        public int N_INTERVALS = 1;
-        public static double MIN_HOP;
-
+        public int _nIntervals;
+        public List<double> _probsSeen;
         StringBuilder _sb;
         private string PATH = @"../Debug/Files/Logers/";
 
@@ -37,13 +36,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             _actions = new List<ReapirType>();
             _actions.Add(ReapirType.FIX); _actions.Add(ReapirType.REPLACE);
             _troubleshooter = troubleshooter;
-            N_INTERVALS = nIntervalsLookAhead;
+            _nIntervals = nIntervalsLookAhead;
             _sb = new StringBuilder();
             PATH += "lk_" + nIntervalsLookAhead +".txt";
         }
         //-----------------------------------------------------------------------------------------------------------
         public ReapirType RepairComponentPolicy(Model model, int compID, double timeLimit, double currTime, out string policyString)
         {
+            _probsSeen = new List<double>();
             State.TROUBLESHOOTER = _troubleshooter;
             Component comp = model._components[compID];
             policyString = string.Empty;
@@ -99,7 +99,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         //-----------------------------------------------------------------------------------------------------------
         public override string ToString()
         {
-            return "Look-Ahead-Tree_" + N_INTERVALS;
+            return "Look-Ahead-Tree_" + _nIntervals;
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -202,8 +202,25 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
         //    return faultProb;
         //}
+
+            //-----+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         private double anticipateFault(State state, int compID)
         {
+
+            //_troubleshooter._model.initModel();
+            //SurvivalBayesModel svModel = (SurvivalBayesModel)_troubleshooter._model;
+            //Component comp = _troubleshooter._model._components[compID];
+            //double lower = state._prevTime;
+            //double up = state._currTime;
+            //double prevAge;
+            //if (state._parent._decisionNode)
+            //    prevAge = 0;
+            //else
+            //    prevAge = state._parent._comps[compID]._age;
+            //double elpsT = state._prevTime;
+
+            //double faultProb = svModel._survivalCurves[compID].intervalFault(lower, up, prevAge, elpsT);
+            //Console.WriteLine("bbb");
 
             _troubleshooter._model.initModel();
             SurvivalBayesModel svModel = (SurvivalBayesModel)_troubleshooter._model;
@@ -215,11 +232,13 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 prevAge = 0;
             else
                 prevAge = state._parent._comps[compID]._age;
-            double elpsT = state._prevTime;
+            double currAge = state._comps[_compId]._age;
 
-            double faultProb = svModel._survivalCurves[compID].intervalFault(lower, up, prevAge, elpsT);
-            //Console.WriteLine("bbb");
+            double faultProb = (svModel._survivalCurves[compID].survive(prevAge) - svModel._survivalCurves[compID].survive(currAge))
+                / svModel._survivalCurves[compID].survive(prevAge);
 
+            if (! _probsSeen.Contains(faultProb))
+                _probsSeen.Add(faultProb);
             return faultProb;
         }
         ////////////-----------------------------------------------------------------------------------------------------------
@@ -425,10 +444,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         private List<Interval> createIntervals(double elpsTime, double Tlimit, int compId)
         {
             List<Interval> dist = new List<Interval>();
-            MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
-            double hop = (Tlimit -elpsTime) / N_INTERVALS;
-            if (hop < MIN_HOP)
-                hop = MIN_HOP;
+            double MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
+            double hop = (Tlimit -elpsTime) / _nIntervals;
+            //if (hop < MIN_HOP)
+            //{
+            //    throw new InvalidProgramException();
+            //    hop = MIN_HOP;
+
+            //}
             double currTime = elpsTime;
             Interval interval;
             do

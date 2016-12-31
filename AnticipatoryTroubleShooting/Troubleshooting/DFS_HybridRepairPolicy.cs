@@ -68,7 +68,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             double costAns = computeCost(startState, compIntervals);
             repairAns = startState._repairType;
             //_troubleshooter.repairComponent(compID, repairAns);
-            writeText(_sb.ToString());
+            writeText();
             return repairAns;
 
             //foreach (var repairType in _actions)
@@ -444,14 +444,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         private List<Interval> createIntervals(double elpsTime, double Tlimit, int compId)
         {
             List<Interval> dist = new List<Interval>();
-            double MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
+            //double MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
             double hop = (Tlimit -elpsTime) / _nIntervals;
-            //if (hop < MIN_HOP)
-            //{
-            //    throw new InvalidProgramException();
-            //    hop = MIN_HOP;
+            if (hop < TroubleShooter.MIN_HOP)
+            {
+                //throw new InvalidProgramException();
+                hop = TroubleShooter.MIN_HOP;
 
-            //}
+            }
             double currTime = elpsTime;
             Interval interval;
             do
@@ -567,31 +567,34 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 if (currState._currTime == _Tlimit)
                 {
                     currState._cost = _troubleshooter.repairComponent(_compId, ReapirType.FIX);
-                    return currState._cost;
+                    //return currState._cost;
                 }
-                foreach (var repairAction in _actions)
+                else
                 {
-                    double repairCost = _troubleshooter.repairComponent(_compId, repairAction); //update only the specific repair comp
-                    _troubleshooter._model.updateCompsAges(nextTime - currState._currTime);
-
-                    State childState = new State(nextTime, currState._currTime, false, currState, _troubleshooter);
-
-                    //childState._cost = _troubleshooter._model._components[_compId].getRepairCost(repairAction);
-
-                    List<Interval> intervalsCopy = new List<Interval>(intervalsProb);
-                    intervalsProb.RemoveAt(0);
-
-                    double childCost = computeCost(childState, intervalsProb); //
-                    double currCost = childCost + repairCost;
-                    //double currCost = childCost;
-                    if (currCost <= currState._cost)
+                    foreach (var repairAction in _actions)
                     {
-                        currState._repairType = repairAction;
-                        currState._cost = currCost;
+                        double repairCost = _troubleshooter.repairComponent(_compId, repairAction); //update only the specific repair comp
+                        _troubleshooter._model.updateCompsAges(nextTime - currState._currTime);
 
+                        State childState = new State(nextTime, currState._currTime, false, currState, _troubleshooter);
+
+                        //childState._cost = _troubleshooter._model._components[_compId].getRepairCost(repairAction);
+
+                        List<Interval> intervalsCopy = new List<Interval>(intervalsProb);
+                        intervalsProb.RemoveAt(0);
+
+                        double childCost = computeCost(childState, intervalsProb); //
+                        double currCost = childCost + repairCost;
+                        //double currCost = childCost;
+                        if (currCost <= currState._cost)
+                        {
+                            currState._repairType = repairAction;
+                            currState._cost = currCost;
+
+                        }
+                        _troubleshooter._model.updateComps(currState._comps);
+                        intervalsProb = intervalsCopy;
                     }
-                    _troubleshooter._model.updateComps(currState._comps);
-                    intervalsProb = intervalsCopy;
                 }
                 //currState._cost = _troubleshooter._model._components[_compId].getRepairCost(currState._repairType);
                 _sb.AppendLine("choose to- " + currState._repairType.ToString());
@@ -599,7 +602,10 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             else
             {
                 if (currState._prevTime == _Tlimit)
+                {
+                    _sb.AppendLine("return 0$");
                     return 0;
+                }
                 int x;
                 if (!currState._parent._decisionNode && currState._currTime == _Tlimit)
                     x = 7;
@@ -623,14 +629,17 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 //_troubleshooter._model.updateComps(currState._comps);
 
             }
+            _sb.AppendLine("return " + currState._cost.ToString() + " $");
+
             return currState._cost;
 
         }
         //-----------------------------------------------------------------------------------------------------------
 
-        public void writeText(string toWrite)
+        public void writeText()
         {
-            File.AppendAllText(PATH, toWrite);
+            _sb.AppendLine("---------------------------");
+            File.AppendAllText(PATH, _sb.ToString());
             _sb = new StringBuilder();
         }
     }

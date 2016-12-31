@@ -20,6 +20,8 @@ namespace AnticipatoryTroubleShooting
         double _nIntervals;
         public IWorldAfterRepair _worldAfterRepair;
         public static double EPSILON = 0.001;
+
+        public static double MIN_HOP;
         #region constants
         double OBSERVE_SYSTEM_COST = 1;
         #endregion
@@ -469,10 +471,11 @@ namespace AnticipatoryTroubleShooting
 
         private void cutNewIntervals(double oldFaultTime, int compID, Dictionary<int, List<Interval>> compsIntervalsDis)
         {
-            double minHop = (_Tlimit - oldFaultTime) / _nIntervals;
+            //double minHop = (_Tlimit - 0) / _nIntervals;
             //double minHop = _Tlimit / _nIntervals;
-
-
+            double intervalPerc = ((_Tlimit - oldFaultTime) / _Tlimit) * (1 / _nIntervals);
+            double hop = _Tlimit / intervalPerc;
+            MIN_HOP = hop;
             List<Interval> dist = new List<Interval>();
             double currTime = oldFaultTime;
             Interval interval;
@@ -480,7 +483,7 @@ namespace AnticipatoryTroubleShooting
             {
                 interval = new Interval();
                 interval.Lr = currTime;
-                currTime += minHop;
+                currTime += hop;
                 if (currTime + EPSILON >= _Tlimit)
                     currTime = _Tlimit;
                 interval.Ur = currTime;

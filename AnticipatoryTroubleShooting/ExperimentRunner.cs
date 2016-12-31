@@ -29,7 +29,7 @@ namespace AnticipatoryTroubleShooting
         string _folderName;
         string _maxAgeDiff;
         int _nFaultsDuringTime = 0;
-        public static int N_INTERVALS = 10;
+        public static int N_INTERVALS = 20;
         
         public static double REPLACE_COST = 10;
         public static double SURVIVAL_FACTOR_NEW = 0.05;
@@ -122,7 +122,7 @@ namespace AnticipatoryTroubleShooting
             TroubleshooterLoger._instance.setLogFileName("troubleshooter_" + fixPolicy.ToString() + "_" + Tlimit);
             CreatorOverTimeLoger._instance.setLogFileName("Creator_" + fixPolicy.ToString() + "_" + Tlimit);
             
-            for (int i=0; i< 1; i++)
+            for (int i=0; i< 30; i++)
             {
                 //troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults);
                double totalCost = _troubleshooter.troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults, out nFix, out nReplace);

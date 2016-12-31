@@ -585,6 +585,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
                         double childCost = computeCost(childState, intervalsProb); //
                         double currCost = childCost + repairCost;
+                        currState._costs.Add(currCost);
                         //double currCost = childCost;
                         if (currCost <= currState._cost)
                         {
@@ -601,26 +602,39 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             }
             else
             {
+                //if (currState._currTime > 13.38 && currState._currTime < 13.39)
+                //    Console.WriteLine();
+                //if (currState._currTime> 16.69 && currState._currTime < 16.694)
+                //    Console.WriteLine();
                 if (currState._prevTime == _Tlimit)
                 {
                     _sb.AppendLine("return 0$");
                     return 0;
                 }
-                int x;
-                if (!currState._parent._decisionNode && currState._currTime == _Tlimit)
-                    x = 7;
+                //int x;
+                //if (!currState._parent._decisionNode && currState._currTime == _Tlimit)
+                //    x = 7;
                 double faultProb = anticipateFault(currState, _compId);
                 _sb.AppendLine("faultProb: " + faultProb);
                 State faultChildState = new State(currState._currTime, currState._prevTime, true, currState, _troubleshooter);
+
+                List<Interval> intervalsCopy = new List<Interval>(intervalsProb);
+
                 double faultChildCost = computeCost(faultChildState, intervalsProb); //
                 //if (nextTime == _Tlimit)
                 //    nextTime -= _epsilon;
                 _troubleshooter._model.updateComps(currState._comps);
 
+
+                //if (currState._currTime > 13.38 && currState._currTime < 13.39)
+                //    Console.WriteLine();
+
                 _troubleshooter._model.updateCompsAges(nextTime - currState._currTime);
                 State healthyChildState = new State(nextTime, currState._currTime, false, currState, _troubleshooter);
                 //intervalsProb.RemoveAt(0);
                 _sb.AppendLine("HealthProb: " + (1 - faultProb));
+                intervalsProb = intervalsCopy;
+                intervalsProb.RemoveAt(0);
 
                 double healthyChildCost = computeCost(healthyChildState, intervalsProb); //
 

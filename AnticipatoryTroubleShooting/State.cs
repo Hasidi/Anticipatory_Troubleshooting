@@ -18,7 +18,9 @@ namespace AnticipatoryTroubleShooting
         public double _prevTime;
         public double _cost;
         public State _parent;
-        double _upFaultProbBranch; // only to decision node, it penetrate it to the chance node
+        public List<double> _costs;
+
+        public int _number;
 
         //public State(double time, bool decision)
         //{
@@ -53,6 +55,7 @@ namespace AnticipatoryTroubleShooting
 
             _cost = double.MaxValue;
             _prevTime = prevTime;
+            _costs = new List<double>();
         }
 
 

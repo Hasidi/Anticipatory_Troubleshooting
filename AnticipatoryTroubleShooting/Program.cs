@@ -194,7 +194,7 @@ namespace AnticipatoryTroubleShooting
             //List<double> punishFactor = new List<double>() { 1, 1.01, 1.05, 1.1, 1.3, 1.4, 1.5, 1.6, 1.8, 2, 2.4, 3 };
 
             List<double> fixRatios = new List<double>() {  0.75};
-            List<double> punishFactor = new List<double>() { 2.5};
+            List<double> punishFactor = new List<double>() { 3.5};
             //List<double> punishFactor = new List<double>() { 1.8 };
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
             //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
@@ -202,12 +202,12 @@ namespace AnticipatoryTroubleShooting
             //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 

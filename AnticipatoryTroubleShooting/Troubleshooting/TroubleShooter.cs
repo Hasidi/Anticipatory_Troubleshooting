@@ -321,6 +321,7 @@ namespace AnticipatoryTroubleShooting
             }
 
             TroubleshooterLoger._instance.totalCostOfExperiments(totalCost);
+            MIN_HOP = double.MaxValue; // need tro check that we arent running DFS with a depth longer than the default of the troubleshooter
             return totalCost;
         }
 
@@ -473,7 +474,7 @@ namespace AnticipatoryTroubleShooting
         {
             //double minHop = (_Tlimit - 0) / _nIntervals;
             //double minHop = _Tlimit / _nIntervals;
-            double intervalPerc = ((_Tlimit - oldFaultTime) / _Tlimit) * (1 / _nIntervals);
+            double intervalPerc = ((_Tlimit - oldFaultTime) / _Tlimit) * (_nIntervals);
             double hop = _Tlimit / intervalPerc;
             MIN_HOP = hop;
             List<Interval> dist = new List<Interval>();

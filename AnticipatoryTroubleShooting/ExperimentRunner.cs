@@ -29,7 +29,7 @@ namespace AnticipatoryTroubleShooting
         string _folderName;
         string _maxAgeDiff;
         int _nFaultsDuringTime = 0;
-        public static int N_INTERVALS = 20;
+        public static int N_INTERVALS = 10;
         
         public static double REPLACE_COST = 10;
         public static double SURVIVAL_FACTOR_NEW = 0.05;

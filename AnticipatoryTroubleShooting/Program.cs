@@ -197,17 +197,17 @@ namespace AnticipatoryTroubleShooting
             List<double> punishFactor = new List<double>() { 2.5};
             //List<double> punishFactor = new List<double>() { 1.8 };
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
-            //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
-            //algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
-            //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
+            algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
+            algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
+            algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
@@ -225,7 +225,7 @@ namespace AnticipatoryTroubleShooting
                     for (int j = 0; j < fixRatios.Count; j++)
                     {
                         ExperimentRunner.FIX_RATIO = fixRatios[j];
-                        experimentRunner.runExperimentsOverTime(20, new DecresingSurival(), algorithm, new List<int>());
+                        experimentRunner.runExperimentsOverTime(28, new DecresingSurival(), algorithm, new List<int>());
                     }
                 }
                 timer.Stop();

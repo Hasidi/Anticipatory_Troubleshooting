@@ -164,27 +164,27 @@ namespace AnticipatoryTroubleShooting
             return repairCost;
         }
 
-        public double repairComponent2(int compID, ReapirType repairAction, State state)
-        {
-            _model.updateObservedValue(compID, 0);
-            Component comp = _model._components[compID];
-            SurvivalBayesModel svModel = (SurvivalBayesModel)_model;
-            double repairCost = _model._components[compID].getRepairCost(repairAction);
-            if (repairAction == ReapirType.FIX)
-            {
-                comp._age = 0;
-                svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
-                //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
-            }
-            else  /* if (repairAction == ReapirType.REPLACE)*/
-            {
-                comp._age = 0;
-                svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
-            }
+        //public double repairComponent2(int compID, ReapirType repairAction, State state)
+        //{
+        //    _model.updateObservedValue(compID, 0);
+        //    Component comp = _model._components[compID];
+        //    SurvivalBayesModel svModel = (SurvivalBayesModel)_model;
+        //    double repairCost = _model._components[compID].getRepairCost(repairAction);
+        //    if (repairAction == ReapirType.FIX)
+        //    {
+        //        comp._age = 0;
+        //        svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+        //        //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+        //    }
+        //    else  /* if (repairAction == ReapirType.REPLACE)*/
+        //    {
+        //        comp._age = 0;
+        //        svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+        //    }
 
-            return repairCost;
-        }
-        //-----------------------------------------------------------------------------------------------------------
+        //    return repairCost;
+        //}
+        ////-----------------------------------------------------------------------------------------------------------
         public void insertSensorsValues(Dictionary<int, int> revealedSensors)
         {
             foreach (var sensorComp in revealedSensors)
@@ -474,8 +474,8 @@ namespace AnticipatoryTroubleShooting
         {
             //double minHop = (_Tlimit - 0) / _nIntervals;
             //double minHop = _Tlimit / _nIntervals;
-            double intervalPerc = ((_Tlimit - oldFaultTime) / _Tlimit) * (_nIntervals);
-            double hop = _Tlimit / intervalPerc;
+            double Ninterval = ((_Tlimit - oldFaultTime) / _Tlimit) * (_nIntervals);
+            double hop = _Tlimit / (double)(Math.Ceiling(Ninterval));
             MIN_HOP = hop;
             List<Interval> dist = new List<Interval>();
             double currTime = oldFaultTime;

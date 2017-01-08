@@ -159,28 +159,28 @@ namespace AnticipatoryTroubleShooting
             }
         }
         // BE Careful, ConstSurvival can be work only with no decreasing repair policy
-        public static void runExperimetnsOverTime2(string filePath, string compsTypesPath)
-        {
-            Model model = new Survival_IN_BayesModel(filePath, compsTypesPath);
-            Diagnoser diagnoser = new Diagnoser(model, null, new ConstCostProbSelector());
-            TroubleShooter troubleshooter = new TroubleShooter(model, diagnoser, new FixingRepairPolicyDecreasing());
-            diagnoser._troubleShooter = troubleshooter;
-            ExperimentRunner experimentRunner = new ExperimentRunner(troubleshooter);
+        //public static void runExperimetnsOverTime2(string filePath, string compsTypesPath)
+        //{
+        //    Model model = new Survival_IN_BayesModel(filePath, compsTypesPath);
+        //    Diagnoser diagnoser = new Diagnoser(model, null, new ConstCostProbSelector());
+        //    TroubleShooter troubleshooter = new TroubleShooter(model, diagnoser, new FixingRepairPolicyDecreasing());
+        //    diagnoser._troubleShooter = troubleshooter;
+        //    ExperimentRunner experimentRunner = new ExperimentRunner(troubleshooter);
 
-            List<double> fixRatios = new List<double>() { 0.01, 0.04, 0.07, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 0.9, 0.92, 0.94, 0.96, 1 };
+        //    List<double> fixRatios = new List<double>() { 0.01, 0.04, 0.07, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 0.9, 0.92, 0.94, 0.96, 1 };
 
-            //List<double> fixRatios = new List<double>() {0.4 };
-            experimentRunner.readFilesOverTime();
+        //    //List<double> fixRatios = new List<double>() {0.4 };
+        //    experimentRunner.readFilesOverTime();
 
-            for (int j = 0; j < fixRatios.Count; j++)
-            {
-                ExperimentRunner.FIX_RATIO = fixRatios[j];
-                experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new FixingRepairPolicy(), new List<int>());
-                experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new HybridRepairPolicy(), new List<int>());
-                experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new ReplacingRepairPolicy(), new List<int>());
-            }
+        //    for (int j = 0; j < fixRatios.Count; j++)
+        //    {
+        //        ExperimentRunner.FIX_RATIO = fixRatios[j];
+        //        experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new FixingRepairPolicy(), new List<int>());
+        //        experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new HybridRepairPolicy(), new List<int>());
+        //        experimentRunner.runExperimentsOverTime(28, new ConstSurvial(), new ReplacingRepairPolicy(), new List<int>());
+        //    }
             
-        }
+        //}
 
         public static void runExperimetnsOverTime3(string filePath, string compsTypesPath)
         {
@@ -193,21 +193,22 @@ namespace AnticipatoryTroubleShooting
             //List<double> fixRatios = new List<double>() { 0.01, 0.04, 0.07, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 0.9, 0.92, 0.94, 0.96, 1 };
             //List<double> punishFactor = new List<double>() { 1, 1.01, 1.05, 1.1, 1.3, 1.4, 1.5, 1.6, 1.8, 2, 2.4, 3 };
 
-            List<double> fixRatios = new List<double>() {  0.75};
-            List<double> punishFactor = new List<double>() { 2.5};
+            List<double> fixRatios = new List<double>() {  0.8};
+            List<double> punishFactor = new List<double>() { 1.5};
             //List<double> punishFactor = new List<double>() { 1.8 };
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
-            algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
-            algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
-            algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
+            //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
 
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+            //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
+            //algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
@@ -225,7 +226,7 @@ namespace AnticipatoryTroubleShooting
                     for (int j = 0; j < fixRatios.Count; j++)
                     {
                         ExperimentRunner.FIX_RATIO = fixRatios[j];
-                        experimentRunner.runExperimentsOverTime(28, new DecresingSurival(), algorithm, new List<int>());
+                        experimentRunner.runExperimentsOverTime(30, new DecresingSurival(), algorithm, new List<int>());
                     }
                 }
                 timer.Stop();

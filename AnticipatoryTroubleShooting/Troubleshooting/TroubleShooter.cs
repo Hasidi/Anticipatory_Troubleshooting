@@ -107,6 +107,7 @@ namespace AnticipatoryTroubleShooting
         //-----------------------------------------------------------------------------------------------------------
         public double fixSystemConsiderTime(Dictionary<int, int> revealedSensors, double timeLimit, double currTime, List<Interval> compIntervals)
         {
+            double repairCost;
             insertSensorsValues(revealedSensors);
             TroubleshooterLoger._instance.markPriorObservedValues(_model._components);
             TroubleshooterLoger._instance.markRevealedSensors(revealedSensors);
@@ -123,7 +124,7 @@ namespace AnticipatoryTroubleShooting
                 if (observedValue != 0)
                 {
                     _diagnoser._nCurrBrokenComponents--;
-                    ReapirType repairType = _repairPolicy.RepairComponentPolicy(_model, currSelectedComp, timeLimit, currTime, out fixPolicyString);
+                    ReapirType repairType = _repairPolicy.RepairComponentPolicy(_model, currSelectedComp, timeLimit, currTime, out fixPolicyString, out repairCost);
                     repairComponent(currSelectedComp, repairType); //////
                     double currCost = _model._components[currSelectedComp].getRepairCost(repairType);
                     totalFixCost += currCost;
@@ -161,7 +162,7 @@ namespace AnticipatoryTroubleShooting
                 svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
             }
             
-            return repairCost;
+            return repairCost + ExperimentRunner.OVERLOADCOST;
         }
 
         //public double repairComponent2(int compID, ReapirType repairAction, State state)
@@ -199,9 +200,11 @@ namespace AnticipatoryTroubleShooting
         //-----------------------------------------------------------------------------------------------------------
         public double fixSystemConsiderTime(Dictionary<int, int> revealedSensors, double timeLimit, double currTime, int faultComp, List<Interval> compIntervals, out ReapirType repairAns)
         {
+            double repairCost;
             insertSensorsValues(revealedSensors);
-            TroubleshooterLoger._instance.markPriorObservedValues(_model._components);
-            TroubleshooterLoger._instance.markRevealedSensors(revealedSensors);
+            //TroubleshooterLoger._instance.markPriorObservedValues(_model._components);
+            //TroubleshooterLoger._instance.markRevealedSensors(revealedSensors);
+            TroubleshooterLoger._instance.writeText("currTime: " + currTime);
             double totalFixCost = 0;
             int iteration = 0;
             string fixPolicyString = "";
@@ -213,11 +216,9 @@ namespace AnticipatoryTroubleShooting
             if (observedValue != 0)
             {
                 _diagnoser._nCurrBrokenComponents--;
-                repairType = _repairPolicy.RepairComponentPolicy(_model, faultComp, timeLimit, currTime, out fixPolicyString);
-                repairComponent(faultComp, repairType); //////
-
-                //double currCost = repairComponent(faultComp, fixType); // use this line for the meantime only in DFS-Policy !!!!!
-                double currCost = _model._components[faultComp].getRepairCost(repairType);
+                repairType = _repairPolicy.RepairComponentPolicy(_model, faultComp, timeLimit, currTime, out fixPolicyString, out repairCost);
+                
+                double currCost = repairComponent(faultComp, repairType); //////
                 totalFixCost += currCost;
                 TroubleshooterLoger._instance.printFixPolicy(repairType.ToString(), currCost, fixPolicyString);
             }

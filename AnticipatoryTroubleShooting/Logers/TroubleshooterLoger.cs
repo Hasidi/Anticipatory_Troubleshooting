@@ -162,7 +162,10 @@ namespace AnticipatoryTroubleShooting
         //-----------------------------------------------------------------------------------------------------------
         public void writeText(string toWrite)
         {
-            File.AppendAllText(PATH, toWrite);
+            _SB.AppendLine(toWrite);
+
+            File.AppendAllText(PATH, _SB.ToString());
+            _SB = new StringBuilder();
         }
 
     }

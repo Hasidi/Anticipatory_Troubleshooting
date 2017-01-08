@@ -41,7 +41,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             PATH += "lk_" + nIntervalsLookAhead +".txt";
         }
         //-----------------------------------------------------------------------------------------------------------
-        public ReapirType RepairComponentPolicy(Model model, int compID, double timeLimit, double currTime, out string policyString)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double timeLimit, double currTime, out string policyString, out double repairCost)
         {
             _probsSeen = new List<double>();
             State.TROUBLESHOOTER = _troubleshooter;
@@ -57,6 +57,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             if (_realityTime + _epsilon >= _Tlimit)
             {
                 //_troubleshooter.repairComponent(compID, ReapirType.FIX);
+                repairCost = model._components[compID]._replaceCost;
                 return ReapirType.FIX;
             }
             List<Interval> compIntervals = createIntervals(_realityTime, _Tlimit, compID);
@@ -69,6 +70,10 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             repairAns = startState._repairType;
             //_troubleshooter.repairComponent(compID, repairAns);
             writeText();
+
+            _troubleshooter._model.updateComps(startState._comps);
+
+            repairCost = costAns;
             return repairAns;
 
         }
@@ -114,8 +119,11 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 prevAge = state._parent._comps[compID]._age;
             double currAge = state._comps[_compId]._age;
 
-            double faultProb = (svModel._survivalCurves[compID].survive(prevAge) - svModel._survivalCurves[compID].survive(currAge))
-                / svModel._survivalCurves[compID].survive(prevAge);
+            //double faultProb = (svModel._survivalCurves[compID].survive(prevAge) - svModel._survivalCurves[compID].survive(currAge))
+            //    / svModel._survivalCurves[compID].survive(prevAge);
+
+
+            double faultProb = svModel._survivalCurves[compID].FaultBetween(currAge, prevAge, prevAge);
 
             if (! _probsSeen.Contains(faultProb))
                 _probsSeen.Add(faultProb);
@@ -138,17 +146,17 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         //}
         //-----------------------------------------------------------------------------------------------------------
 
-        private List<Interval> createIntervals(double elpsTime, double Tlimit, int compId)
+        public List<Interval> createIntervals(double elpsTime, double Tlimit, int compId)
         {
             List<Interval> dist = new List<Interval>();
             //double MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
             double hop = (Tlimit -elpsTime) / _nIntervals;
-            if (hop < TroubleShooter.MIN_HOP)
-            {
-                //throw new InvalidProgramException();
-                hop = TroubleShooter.MIN_HOP;
+            //if (hop < TroubleShooter.MIN_HOP)
+            //{
+            //    //throw new InvalidProgramException();
+            //    hop = TroubleShooter.MIN_HOP;
 
-            }
+            //}
             double currTime = elpsTime;
             Interval interval;
             do
@@ -167,11 +175,6 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             SurvivalBayesModel model = (SurvivalBayesModel)_troubleshooter._model;
             double Cage = model._components[compId]._age;
 
-            foreach (var intervalProb in dist)
-            {
-                double currProb = model._survivalCurves[compId].intervalFault(intervalProb.Lr, intervalProb.Ur, Cage, elpsTime);
-
-            }
             return dist;
         }
 
@@ -179,7 +182,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         //-----------------------------------------------------------------------------------------------------------
 
 
-        private double computeCost(State currState, List<Interval> intervalsProb)
+        public double computeCost(State currState, List<Interval> intervalsProb)
         {
             if (intervalsProb.Count == 0)
                 return 0;
@@ -217,6 +220,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
                         }
                         _troubleshooter._model.updateComps(currState._comps);
+                        //_troubleshooter._model.initModel();
                         intervalsProb = intervalsCopy;
                     }
                 }
@@ -247,6 +251,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 //if (nextTime == _Tlimit)
                 //    nextTime -= _epsilon;
                 _troubleshooter._model.updateComps(currState._comps);
+                //_troubleshooter._model.initModel();
 
 
                 //if (currState._currTime > 13.38 && currState._currTime < 13.39)
@@ -263,7 +268,8 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
                 currState._cost = faultChildCost * faultProb + (1 - faultProb) * healthyChildCost;
 
-                //_troubleshooter._model.updateComps(currState._comps);
+                _troubleshooter._model.updateComps(currState._comps);
+                //_troubleshooter._model.initModel();
 
             }
             _sb.AppendLine("return " + currState._cost.ToString() + " $");

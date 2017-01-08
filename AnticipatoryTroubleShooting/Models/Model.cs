@@ -172,18 +172,18 @@ namespace AnticipatoryTroubleShooting
             }
         }
 
-        public virtual void updateComps(ref Dictionary<int, Component> components)
-        {
-            //Models.SurvivalBayesModel survModel = this as Models.SurvivalBayesModel;
-            foreach (var comp in components)
-            {
-                _components[comp.Key] = new Component(comp.Value);
-                //not sure this is the place to update curve
-                //if (survModel != null)
-                //    survModel.updateSurvivalCurve(comp.Key, comp.Value._survivalFactor);
+        //public virtual void updateComps(ref Dictionary<int, Component> components)
+        //{
+        //    //Models.SurvivalBayesModel survModel = this as Models.SurvivalBayesModel;
+        //    foreach (var comp in components)
+        //    {
+        //        _components[comp.Key] = new Component(comp.Value);
+        //        //not sure this is the place to update curve
+        //        //if (survModel != null)
+        //        //    survModel.updateSurvivalCurve(comp.Key, comp.Value._survivalFactor);
 
-            }
-        }
+        //    }
+        //}
         //-----------------------------------------------------------------------------------------------------------
         public void updateCompsAges(double timeToAdd)
         {

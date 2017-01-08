@@ -69,6 +69,7 @@
     <Compile Include="SurvivalFunctions\ExponentialDecayCurve.cs" />
     <Compile Include="Troubleshooting\DFS_HybridRepairPolicy.cs" />
     <Compile Include="Troubleshooting\Diagnoser.cs" />
+    <Compile Include="Troubleshooting\HealthyReplacementRepairingPolicy.cs" />
     <Compile Include="Troubleshooting\IObserveComponentSelection.cs" />
     <Compile Include="Troubleshooting\ITroubleShooterRepairingPolicy.cs" />
     <Compile Include="Models\BayesianNetworkModel.cs" />

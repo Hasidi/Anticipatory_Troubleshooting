@@ -9,18 +9,24 @@ namespace AnticipatoryTroubleShooting
 {
     interface ITroubleShooterRepairingPolicy
     {
-        ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString);
+        ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost);
     }
     //-----------------------------------------------------------------------------------------------------------
     class HybridRepairPolicy : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString)
+        // does not do what should do - is like the decreasing one
+        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
         {
             Component comp = model._components[compID];
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
-            double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, comp._age);
+            //double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, comp._age);
+            double futureFixSurvive = 1 - svModel._survivalCurves[compID].FaultBetween(maxAge, currTime, currTime);
+
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * (1 - futureFixSurvive);
-            double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, 0);
+
+            //double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, 0);
+            double futureReplaceSurvive = 1 - svModel._survivalCurves[compID].FaultBetween(maxAge, currTime, currTime);
+
             double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * (1 - futureReplaceSurvive);
             policyString = "comp.age = " + comp._age + ", currTime = " + currTime + Environment.NewLine + "future-Fix-survive = " + futureFixSurvive + Environment.NewLine + "future-Replace-survive = " + futureReplaceSurvive;
             ReapirType fixAns;
@@ -28,10 +34,13 @@ namespace AnticipatoryTroubleShooting
             {
                 fixAns = ReapirType.REPLACE;
                 comp._age = 0;
+                repairCost = futureReplaceCostEstimated;
+
             }
             else
             {
                 fixAns = ReapirType.FIX;
+                repairCost = futureFixCostEstimated;
             }
             return fixAns;
         }
@@ -45,12 +54,13 @@ namespace AnticipatoryTroubleShooting
     //-----------------------------------------------------------------------------------------------------------
     class FixingRepairPolicy : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
         {
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
 
             Component comp = model._components[compID];
             policyString = string.Empty;
+            repairCost = model._components[compID]._repairCost;
             return ReapirType.FIX;
 
         }
@@ -66,19 +76,28 @@ namespace AnticipatoryTroubleShooting
     //-----------------------------------------------------------------------------------------------------------
     class HybridRepairPolicyDecreasing : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
         {
             Component comp = model._components[compID];
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
-            double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, comp._age);
+            //double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, comp._age);
+            svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+            double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge - currTime);
+
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * (1 - futureFixSurvive);
-            double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, 0);
+
+            //double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, 0);
+            svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW);
+            double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge - currTime);
+
             double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * (1 - futureReplaceSurvive);
             policyString = "comp.age = " + comp._age + ", currTime = " + currTime + Environment.NewLine + "future-Fix-survive = " + futureFixSurvive + Environment.NewLine + "future-Replace-survive = " + futureReplaceSurvive;
             ReapirType fixAns;
             if (futureReplaceCostEstimated <= futureFixCostEstimated)
             {
                 fixAns = ReapirType.REPLACE;
+                repairCost = futureReplaceCostEstimated;
+
                 //comp._age = 0;
                 //svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
 
@@ -86,6 +105,8 @@ namespace AnticipatoryTroubleShooting
             else
             {
                 fixAns = ReapirType.FIX;
+                repairCost = futureFixCostEstimated;
+
                 //comp._age = 0;
                 //svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
                 //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
@@ -102,7 +123,7 @@ namespace AnticipatoryTroubleShooting
     //-----------------------------------------------------------------------------------------------------------
     class FixingRepairPolicyDecreasing : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
         {
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
 
@@ -112,6 +133,7 @@ namespace AnticipatoryTroubleShooting
             //comp._age = 0;
             //svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
             //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+            repairCost = model._components[compID]._repairCost;
             return ReapirType.FIX;
 
         }
@@ -132,11 +154,13 @@ namespace AnticipatoryTroubleShooting
     //-----------------------------------------------------------------------------------------------------------
     class ReplacingRepairPolicy : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
         {
             Component comp = model._components[compID];
             policyString = string.Empty;
             //comp._age = 0;
+            repairCost = model._components[compID]._replaceCost;
+ 
             return ReapirType.REPLACE;
 
         }
@@ -169,7 +193,7 @@ namespace AnticipatoryTroubleShooting
 
 
     //-----------------------------------------------------------------------------------------------------------
-    public enum ReapirType { FIX, REPLACE };
+    public enum ReapirType { FIX, REPLACE, NoAction };
 
 
 }

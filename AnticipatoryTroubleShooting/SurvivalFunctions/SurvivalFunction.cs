@@ -19,25 +19,34 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
             return (1 - survive(age));
         }
         //-----------------------------------------------------------------------------------------------------------
-        public double survive(double Ur, double elspTime, double currAge)
+        //public double survive(double Ur, double elspTime, double currAge)
+        //{
+        //    //if (currAge > elspTime)
+        //    //    throw new InvalidOperationException();
+        //    double ans = survive(Ur - elspTime + currAge);
+        //    return ans;
+        //}
+        //-----------------------------------------------------------------------------------------------------------
+        //public double intervalFault(double lower, double upper, double age, double elpsTime)
+        //{
+        //    if (age > lower)
+        //    {
+        //        if (Math.Abs(age - lower) > 0.001)
+        //            throw new InvalidOperationException();
+        //    }
+        //    double d1 = survive(lower, elpsTime, age);
+        //    double d2 = survive(upper, elpsTime, age);
+        //    return (d1-d2);
+        //}
+        //-----------------------------------------------------------------------------------------------------------
+        public double FaultBetween(double Ur, double Ul, double currTime)
         {
             //if (currAge > elspTime)
             //    throw new InvalidOperationException();
-            double ans = survive(Ur - elspTime + currAge);
+            double ans = (survive(Ul) - survive(Ur)) / (survive(currTime));
             return ans;
         }
-        //-----------------------------------------------------------------------------------------------------------
-        public double intervalFault(double lower, double upper, double age, double elpsTime)
-        {
-            if (age > lower)
-            {
-                if (Math.Abs(age - lower) > 0.001)
-                    throw new InvalidOperationException();
-            }
-            double d1 = survive(lower, elpsTime, age);
-            double d2 = survive(upper, elpsTime, age);
-            return (d1-d2);
-        }
-        //-----------------------------------------------------------------------------------------------------------
+
+
     }
 }

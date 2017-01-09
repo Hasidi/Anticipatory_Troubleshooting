@@ -161,8 +161,8 @@ namespace AnticipatoryTroubleShooting
                 comp._age = 0;
                 svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
             }
-            
-            return repairCost + ExperimentRunner.OVERLOADCOST;
+
+            return repairCost;
         }
 
         //public double repairComponent2(int compID, ReapirType repairAction, State state)
@@ -300,7 +300,7 @@ namespace AnticipatoryTroubleShooting
                 else
                     nReplace++;
 
-                totalCost += cost;
+                totalCost += cost + ExperimentRunner.OVERLOADCOST;
                 faultsQueue.RemoveMin();
 
                 _model.updateComps(testCompCopy); //

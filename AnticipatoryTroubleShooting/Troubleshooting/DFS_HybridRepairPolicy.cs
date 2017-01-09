@@ -149,14 +149,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         public List<Interval> createIntervals(double elpsTime, double Tlimit, int compId)
         {
             List<Interval> dist = new List<Interval>();
-            //double MIN_HOP = Tlimit / ExperimentRunner.N_INTERVALS;
+            double MIN_HOP = Tlimit / (double)ExperimentRunner.N_INTERVALS;
             double hop = (Tlimit -elpsTime) / _nIntervals;
-            //if (hop < TroubleShooter.MIN_HOP)
-            //{
-            //    //throw new InvalidProgramException();
-            //    hop = TroubleShooter.MIN_HOP;
+            if (hop < MIN_HOP)
+            {
+                //throw new InvalidProgramException();
+                hop = MIN_HOP;
 
-            //}
+            }
             double currTime = elpsTime;
             Interval interval;
             do
@@ -210,7 +210,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                         intervalsProb.RemoveAt(0);
 
                         double childCost = computeCost(childState, intervalsProb); //
-                        double currCost = childCost + repairCost;
+                        double currCost = childCost + repairCost + ExperimentRunner.OVERLOADCOST;
                         currState._costs.Add(currCost);
                         //double currCost = childCost;
                         if (currCost <= currState._cost)

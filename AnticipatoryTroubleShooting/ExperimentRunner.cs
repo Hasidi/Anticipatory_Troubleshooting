@@ -117,6 +117,7 @@ namespace AnticipatoryTroubleShooting
             Dictionary<int, Component> components = _experiments[0]._components;
             _troubleshooter._model.initModel(components);
             initRepairCosts();
+            //initRepairCostsDiffRatios();
             initSurvivals();
             int nFaults; int nFix; int nReplace;
             TroubleshooterLoger._instance.setLogFileName("troubleshooter_" + fixPolicy.ToString() + "_" + Tlimit);
@@ -154,6 +155,18 @@ namespace AnticipatoryTroubleShooting
             {
                 _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
                 _troubleshooter._model._components[comp]._repairCost = FIX_RATIO * REPLACE_COST;
+            }
+        }
+        private void initRepairCostsDiffRatios()
+        {
+            Random rand = new Random(5);
+            double[] ratios = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+            foreach (var comp in _troubleshooter._model._testComponents)
+            {
+                _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
+                double place = rand.NextDouble() * (double)(ratios.Length-1);
+                double p = Math.Ceiling(place);
+                _troubleshooter._model._components[comp]._repairCost = ratios[(int)p] * REPLACE_COST;
             }
         }
         //----------------------------------------------------------------------------------------------------------------------

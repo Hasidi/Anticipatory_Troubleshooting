@@ -27,7 +27,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             repairCost = costAns;
             Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, compID, timeLimit);
             policyString = null;
-            return ReapirType.FIX;
+            return repairType;
         }
         //-----------------------------------------------------------------------------------------------------------
         public Dictionary<int, ReapirType> GetHelathCompsPolicy(Model model, int faultComp, double timeLimit, double currTime)
@@ -71,7 +71,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             _troubleshooter._model.updateCompsAges(nextTime - _currTime);
             compIntervals.RemoveAt(0);
             State ReplaceState = new State(nextTime, 0, false, startState, _troubleshooter);
-            double ExpecReplaceCost = _repairPolicy.computeCost(startState, compIntervals);
+            double ExpecReplaceCost = _repairPolicy.computeCost(startState, compIntervals) + model._components[healthComp]._replaceCost;
 
 
 

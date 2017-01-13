@@ -76,23 +76,23 @@ namespace AnticipatoryTroubleShooting
     //-----------------------------------------------------------------------------------------------------------
     class HybridRepairPolicyDecreasing : ITroubleShooterRepairingPolicy
     {
-        public ReapirType RepairComponentPolicy(Model model, int compID, double maxAge, double currTime, out string policyString, out double repairCost)
+        public ReapirType RepairComponentPolicy(Model model, int compID, double Tlimit, double currTime, out string policyString, out double repairCost)
         {
             
             Component comp = model._components[compID];
-            if (comp._age > currTime)
-                throw new Exception();
+            //if (Math.Abs(comp._age - currTime) > 0.001)
+            //    throw new Exception();
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
-            //double futureFixSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, comp._age);
             svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
-            double futureFixFault = svModel._survivalCurves[compID].FaultBetween(maxAge, currTime, currTime);
+            double futureFixFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
+            //double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
 
             //double futureFixCostEstimated = comp._repairCost + comp._replaceCost * (1 - futureFixSurvive);
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * futureFixFault;
 
-            //double futureReplaceSurvive = svModel._survivalCurves[compID].survive(maxAge, currTime, 0);
             svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW);
-            double futureReplaceFault = svModel._survivalCurves[compID].FaultBetween(maxAge, currTime, currTime);
+            double futureReplaceFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
+            //double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
 
             //double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * (1 - futureReplaceSurvive);
             double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * futureReplaceFault;

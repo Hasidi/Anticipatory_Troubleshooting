@@ -45,8 +45,11 @@ namespace AnticipatoryTroubleShooting
             {
                 if (currInterval.Ur == -1)
                     continue;
+
                 //double currProb = model._survivalCurves[compId].intervalFault(currInterval.Lr, currInterval.Ur, Cage, elpsTime);
-                double currProb = model._survivalCurves[compId].FaultBetween(currInterval.Ur, currInterval.Lr, elpsTime);
+                //double currProb = model._survivalCurves[compId].FaultBetween(currInterval.Ur, currInterval.Lr, elpsTime);
+                double currProb = model._survivalCurves[compId].survive(currInterval.Ur, currInterval.Lr, elpsTime);
+
                 currInterval.faultProb = currProb;
                 timeDistribution.Add(currInterval);
                 totalProbForChecking += currProb;

@@ -46,7 +46,12 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
             double ans = (survive(Ul) - survive(Ur)) / (survive(currTime));
             return ans;
         }
-
+        //-----------------------------------------------------------------------------------------------------------
+        public double faultProb(double Ur, double Lr, double elspTime)
+        {
+            double ans = survive(Lr - elspTime) - survive(Ur - elspTime);
+            return ans; 
+        }
 
     }
 }

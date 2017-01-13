@@ -193,24 +193,24 @@ namespace AnticipatoryTroubleShooting
             //List<double> fixRatios = new List<double>() { 0.01, 0.04, 0.07, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 0.9, 0.92, 0.94, 0.96, 1 };
             //List<double> punishFactor = new List<double>() { 1, 1.01, 1.05, 1.1, 1.3, 1.4, 1.5, 1.6, 1.8, 2, 2.4, 3 };
 
-            List<double> fixRatios = new List<double>() {  0.7};
-            List<double> punishFactor = new List<double>() { 1.5};
+            List<double> fixRatios = new List<double>() {  0.6};
+            List<double> punishFactor = new List<double>() { 1.8};
             //List<double> punishFactor = new List<double>() { 1.8 };
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
             //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
 
             //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
-            //algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
+            algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
 
             Stopwatch timer = new Stopwatch();

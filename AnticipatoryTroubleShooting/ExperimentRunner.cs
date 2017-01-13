@@ -32,7 +32,7 @@ namespace AnticipatoryTroubleShooting
         public static int N_INTERVALS = 30;
         
         public static double REPLACE_COST = 10;
-        public static double SURVIVAL_FACTOR_NEW = 0.05;
+        public static double SURVIVAL_FACTOR_NEW = 0.08;
         public static double OVERLOADCOST = 0;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE = 1.02;
@@ -164,9 +164,8 @@ namespace AnticipatoryTroubleShooting
             foreach (var comp in _troubleshooter._model._testComponents)
             {
                 _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
-                double place = rand.NextDouble() * (double)(ratios.Length-1);
-                double p = Math.Ceiling(place);
-                _troubleshooter._model._components[comp]._repairCost = ratios[(int)p] * REPLACE_COST;
+                int place = rand.Next(0, ratios.Length);
+                _troubleshooter._model._components[comp]._repairCost = ratios[(int)place] * REPLACE_COST;
             }
         }
         //----------------------------------------------------------------------------------------------------------------------

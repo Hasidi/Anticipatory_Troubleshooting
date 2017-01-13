@@ -70,6 +70,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             repairAns = startState._repairType;
             //_troubleshooter.repairComponent(compID, repairAns);
             writeText();
+            _sb = new StringBuilder();
 
             _troubleshooter._model.updateComps(startState._comps);
 

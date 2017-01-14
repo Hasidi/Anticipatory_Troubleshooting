@@ -23,6 +23,8 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
         }
         public override double survive(double age)
         {
+            //if (_lamda > ExperimentRunner.SURVIVAL_FACTOR_NEW)
+            //    throw new UnauthorizedAccessException();
             double ans = _N0 * Math.Exp(-_lamda * age);
             return ans;
         }

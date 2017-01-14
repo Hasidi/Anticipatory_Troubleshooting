@@ -29,13 +29,13 @@ namespace AnticipatoryTroubleShooting
         string _folderName;
         string _maxAgeDiff;
         int _nFaultsDuringTime = 0;
-        public static int N_INTERVALS = 30;
+        public static int N_INTERVALS = 15;
         
-        public static double REPLACE_COST = 10;
-        public static double SURVIVAL_FACTOR_NEW = 0.08;
+        public static double REPLACE_COST = 1;
+        public static double SURVIVAL_FACTOR_NEW = 0.04;
         public static double OVERLOADCOST = 0;
         public static double FIX_RATIO = 0;
-        public static double SURVIVAL_FACTOR_REDUCE = 1.02;
+        public static double SURVIVAL_FACTOR_REDUCE;
 
         #endregion
 
@@ -123,7 +123,7 @@ namespace AnticipatoryTroubleShooting
             TroubleshooterLoger._instance.setLogFileName("troubleshooter_" + fixPolicy.ToString() + "_" + Tlimit);
             CreatorOverTimeLoger._instance.setLogFileName("Creator_" + fixPolicy.ToString() + "_" + Tlimit);
             
-            for (int i=0; i< 1; i++)
+            for (int i=0; i< 30; i++)
             {
                 //troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults);
                double totalCost = _troubleshooter.troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults, out nFix, out nReplace);
@@ -135,6 +135,32 @@ namespace AnticipatoryTroubleShooting
             }
             TroubleshooterLoger._instance.writeText("=======================================================================Finished Params Iteration========================================================================");
             CreatorOverTimeLoger._instance.writeText("=======================================================================Finished Params Iteration========================================================================");
+
+        }
+
+        public void runSingleExperimentOverTime(double Tlimit, IWorldAfterRepair worldAfterRepair, ITroubleShooterRepairingPolicy fixPolicy, List<int> nodesToReveal, List<double> costsRatios, double maxRatio)
+        {
+            _troubleshooter._worldAfterRepair = worldAfterRepair;
+            Dictionary<int, Component> components = _experiments[0]._components;
+            _troubleshooter._model.initModel(components);
+
+            initRepairCosts(costsRatios);
+            initSurvivals();
+            int nFaults; int nFix; int nReplace;
+            TroubleshooterLoger._instance.setLogFileName("troubleshooter_" + fixPolicy.ToString() + "_" + Tlimit);
+            CreatorOverTimeLoger._instance.setLogFileName("Creator_" + fixPolicy.ToString() + "_" + Tlimit);
+
+
+            //troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults);
+            double totalCost = _troubleshooter.troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults, out nFix, out nReplace);
+
+            AddCSVLine(_troubleshooter._repairPolicy, maxRatio, Tlimit, nFaults, nFix, nReplace, totalCost);
+
+            resetAges(); initSurvivals();
+            _troubleshooter.initTroubleshooter();
+            
+            //TroubleshooterLoger._instance.writeText("=======================================================================Finished Params Iteration========================================================================");
+            //CreatorOverTimeLoger._instance.writeText("=======================================================================Finished Params Iteration========================================================================");
 
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -157,6 +183,16 @@ namespace AnticipatoryTroubleShooting
                 _troubleshooter._model._components[comp]._repairCost = FIX_RATIO * REPLACE_COST;
             }
         }
+        private void initRepairCosts(List<double> costRatios)
+        {
+            int i = 0;
+            foreach (var comp in _troubleshooter._model._testComponents)
+            {
+                _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
+                _troubleshooter._model._components[comp]._repairCost = costRatios.ElementAt(i) * REPLACE_COST;
+                i++;
+            }
+        }
         private void initRepairCostsDiffRatios()
         {
             Random rand = new Random(5);
@@ -174,8 +210,11 @@ namespace AnticipatoryTroubleShooting
             SurvivalBayesModel model = (SurvivalBayesModel)_troubleshooter._model;
             foreach (var comp in _troubleshooter._model._testComponents)
             {
-                model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+                //model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+                model.updateSurvivalCurve(comp, 0.00004);
+
             }
+            model.updateSurvivalCurve(4, 0.04);
         }
         //----------------------------------------------------------------------------------------------------------------------
 

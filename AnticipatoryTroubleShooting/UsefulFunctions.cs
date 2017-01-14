@@ -8,7 +8,7 @@ namespace AnticipatoryTroubleShooting
 {
     class UsefulFunctions
     {
-        public static Random RANDOM = new Random(10);
+        public static Random RANDOM = new Random(1);
         //-----------------------------------------------------------------------------------------------------------------------------
         //create sample according to a given distribution- eq. the value that will choose be the one with the most probability
         public static int createSample(double[] distributionArray)

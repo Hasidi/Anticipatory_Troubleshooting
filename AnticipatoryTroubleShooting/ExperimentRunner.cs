@@ -32,7 +32,7 @@ namespace AnticipatoryTroubleShooting
         public static int N_INTERVALS = 15;
         
         public static double REPLACE_COST = 1;
-        public static double SURVIVAL_FACTOR_NEW = 0.04;
+        public static double SURVIVAL_FACTOR_NEW = 0.05;
         public static double OVERLOADCOST = 0;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
@@ -211,7 +211,7 @@ namespace AnticipatoryTroubleShooting
             foreach (var comp in _troubleshooter._model._testComponents)
             {
                 //model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
-                model.updateSurvivalCurve(comp, 0.00004);
+                model.updateSurvivalCurve(comp, 0.0000004);
 
             }
             model.updateSurvivalCurve(4, 0.04);

@@ -69,7 +69,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             double costAns = computeCost(startState, compIntervals);
             repairAns = startState._repairType;
             //_troubleshooter.repairComponent(compID, repairAns);
-            writeText();
+            //writeText();
             _sb = new StringBuilder();
 
             _troubleshooter._model.updateComps(startState._comps);

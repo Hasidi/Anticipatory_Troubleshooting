@@ -204,7 +204,7 @@ namespace AnticipatoryTroubleShooting
 
             //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
             //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
-            algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
+            //algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
             ////algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
@@ -215,6 +215,9 @@ namespace AnticipatoryTroubleShooting
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
+
+
+            algorithmsList.Add(new Troubleshooting.HealthyReplacementRepairingPolicy(troubleshooter,4), new TimeSpan());
 
 
             Stopwatch timer = new Stopwatch();
@@ -258,9 +261,9 @@ namespace AnticipatoryTroubleShooting
             //List<double> punishFactor = new List<double>() { 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4};
 
             //List<double> fixRatios = new List<double>() { 0.6 };
-            //List<double> punishFactor = new List<double>() { 1.8 };
+            List<double> punishFactor = new List<double>() { 1.8};
 
-            List<double> punishFactor = new List<double>() { 1.2, 1.4, 1.6, 1.8, 2, 2.2 };
+            //List<double> punishFactor = new List<double>() {  1.8,2,2.1, 2.2,2.4 };
 
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
 
@@ -269,17 +272,17 @@ namespace AnticipatoryTroubleShooting
             algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
-            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
+            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
             experimentRunner.readFilesOverTime();
-            Random randomSeed = new Random();
+            Random randomSeed = new Random(2);
             List<Interval> intervalsCost = initCostIntervals();
             //List<int> randomSeeds = new List<int>() { 1, 2, 3, 4 };
 
@@ -292,14 +295,14 @@ namespace AnticipatoryTroubleShooting
                     {
                         //UsefulFunctions.RANDOM = new Random();
                         List <double> costs = randCosts(interval, model._testComponents.Count);
-                        int seed = randomSeed.Next(100);
+                        int seed = randomSeed.Next();
                         for (int a = 0; a < algorithmsList.Count; a++)
                         {
                             ITroubleShooterRepairingPolicy algorithm = algorithmsList.ElementAt(a).Key;
 
                             UsefulFunctions.RANDOM = new Random(seed);
 
-                            experimentRunner.runSingleExperimentOverTime(50, new DecresingSurival(), algorithm, new List<int>(), costs, interval.Ur);
+                            experimentRunner.runSingleExperimentOverTime(40, new DecresingSurival(), algorithm, new List<int>(), costs, interval.Ur);
                         }
                     }
                 }
@@ -352,10 +355,13 @@ namespace AnticipatoryTroubleShooting
         public static List<Interval> initCostIntervals()
         {
             List<Interval> ans = new List<Interval>();
-            ans.Add(new Interval(0.1, 0.4));
-            ans.Add(new Interval(0.4, 0.65));
-            ans.Add(new Interval(0.7, 0.8));
-            ans.Add(new Interval(0.85, 0.95));
+            //ans.Add(new Interval(0.1, 0.4));
+            //ans.Add(new Interval(0.4, 0.65));
+            //ans.Add(new Interval(0.3, 0.9));
+            //ans.Add(new Interval(0.85, 0.95));
+
+
+            ans.Add(new Interval(0.7, 0.7));
 
             return ans;
 

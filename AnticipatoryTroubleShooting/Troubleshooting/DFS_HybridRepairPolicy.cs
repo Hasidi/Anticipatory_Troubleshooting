@@ -74,7 +74,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
             _troubleshooter._model.updateComps(startState._comps);
 
-            repairCost = costAns;
+            repairCost = costAns - ExperimentRunner.OVERHEADCOST;
             return repairAns;
 
         }
@@ -211,7 +211,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                         intervalsProb.RemoveAt(0);
 
                         double childCost = computeCost(childState, intervalsProb); //
-                        double currCost = childCost + repairCost + ExperimentRunner.OVERLOADCOST;
+                        double currCost = childCost + repairCost + ExperimentRunner.OVERHEADCOST;
                         currState._costs.Add(currCost);
                         //double currCost = childCost;
                         if (currCost <= currState._cost)

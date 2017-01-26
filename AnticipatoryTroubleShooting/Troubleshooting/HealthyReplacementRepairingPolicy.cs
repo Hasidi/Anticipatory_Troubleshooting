@@ -25,8 +25,12 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             double costAns;
             ReapirType repairType = _repairPolicy.RepairComponentPolicy(model, compID, timeLimit, currTime, out policyString, out costAns);
             repairCost = costAns;
+
             Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, compID, timeLimit);
+            double healthCost = repairHealth(healthPolicy);
+            repairCost += healthCost;
             policyString = null;
+
             return repairType;
         }
         //-----------------------------------------------------------------------------------------------------------
@@ -36,8 +40,17 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, faultComp, timeLimit);
             return healthPolicy;
         }
-
-
+        //-----------------------------------------------------------------------------------------------------------
+        private double repairHealth(Dictionary<int, ReapirType> healthPolicy)
+        {
+            double totalCost = 0;
+            foreach (var healthComp in healthPolicy)
+            {
+                double currCost = _troubleshooter.repairComponent(healthComp.Key, healthComp.Value);
+                totalCost += currCost;
+            }
+            return totalCost;
+        }
         //-----------------------------------------------------------------------------------------------------------
 
         private Dictionary<int, ReapirType> RepairHealthComponents(Model model, int faultComp, double timeLimit)

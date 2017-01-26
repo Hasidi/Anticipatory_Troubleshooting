@@ -29,11 +29,11 @@ namespace AnticipatoryTroubleShooting
         string _folderName;
         string _maxAgeDiff;
         int _nFaultsDuringTime = 0;
-        public static int N_INTERVALS = 15;
+        public static int N_INTERVALS = 20;
         
-        public static double REPLACE_COST = 1;
+        public static double REPLACE_COST = 10;
         public static double SURVIVAL_FACTOR_NEW = 0.05;
-        public static double OVERLOADCOST = 0;
+        public static double OVERHEADCOST = 0;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
 
@@ -193,28 +193,28 @@ namespace AnticipatoryTroubleShooting
                 i++;
             }
         }
-        private void initRepairCostsDiffRatios()
-        {
-            Random rand = new Random(5);
-            double[] ratios = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
-            foreach (var comp in _troubleshooter._model._testComponents)
-            {
-                _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
-                int place = rand.Next(0, ratios.Length);
-                _troubleshooter._model._components[comp]._repairCost = ratios[(int)place] * REPLACE_COST;
-            }
-        }
+        //private void initRepairCostsDiffRatios()
+        //{
+        //    Random rand = new Random(5);
+        //    double[] ratios = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+        //    foreach (var comp in _troubleshooter._model._testComponents)
+        //    {
+        //        _troubleshooter._model._components[comp]._replaceCost = REPLACE_COST;
+        //        int place = rand.Next(0, ratios.Length);
+        //        _troubleshooter._model._components[comp]._repairCost = ratios[(int)place] * REPLACE_COST;
+        //    }
+        //}
         //----------------------------------------------------------------------------------------------------------------------
         private void initSurvivals()
         {
             SurvivalBayesModel model = (SurvivalBayesModel)_troubleshooter._model;
             foreach (var comp in _troubleshooter._model._testComponents)
             {
-                //model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
-                model.updateSurvivalCurve(comp, 0.0000004);
+                model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+                //model.updateSurvivalCurve(comp, 0.0000004);
 
             }
-            model.updateSurvivalCurve(4, 0.04);
+            //model.updateSurvivalCurve(4, 0.04);
         }
         //----------------------------------------------------------------------------------------------------------------------
 

@@ -300,7 +300,7 @@ namespace AnticipatoryTroubleShooting
                 else
                     nReplace++;
 
-                totalCost += cost + ExperimentRunner.OVERLOADCOST;
+                totalCost += (cost + ExperimentRunner.OVERHEADCOST);
                 faultsQueue.RemoveMin();
 
                 _model.updateComps(testCompCopy); //

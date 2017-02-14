@@ -33,7 +33,7 @@ namespace AnticipatoryTroubleShooting
         
         public static double REPLACE_COST = 10;
         public static double SURVIVAL_FACTOR_NEW = 0.05;
-        public static double OVERHEADCOST = 0;
+        public static double OVERHEADCOST = 150;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
 

@@ -314,7 +314,11 @@ namespace AnticipatoryTroubleShooting
                     cutNewIntervals(currFault._faultTime, currFault._compID, compsIntervalsDis);
 
                 double newFaultTime = sampleNewCompFault(compsIntervalsDis, currFault._compID, Tlimit, currFault._faultTime);
-                if (newFaultTime != -1)
+                if (_repairPolicy is Troubleshooting.HealthyReplacementRepairingPolicy)
+                {
+
+                }
+                    if (newFaultTime != -1)
                 {
                     faultsQueue.Add(new IntervalFault(currFault._compID, newFaultTime));
                     //nFaults++;
@@ -546,7 +550,7 @@ namespace AnticipatoryTroubleShooting
                     compIntervals.Remove(x);
             }
         }
-
+        //----------------------------------------------------------------------------------------------------------------------
         private void removeOldIntervals(double currTime, Dictionary<int, List<Interval>> compsIntervals, int compID)
         {
 
@@ -563,7 +567,7 @@ namespace AnticipatoryTroubleShooting
                 compIntervals.Remove(x);
             
         }
-
+        //----------------------------------------------------------------------------------------------------------------------
 
         private void printIntervalList(List<Interval> intervals, double currTime)
         {
@@ -575,5 +579,14 @@ namespace AnticipatoryTroubleShooting
             Console.WriteLine(sb.ToString());
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
+        private void rearrangeFaultQueue(MinHeap<IntervalFault> faultQ, List<int> healthReplaced, Dictionary<int, List<Interval>> compsIntervalsDis, int compId, double Tlimit, double currTime)
+        {
+            foreach (var x in healthReplaced)
+            {
+                double newFaultTime = sampleNewCompFault(compsIntervalsDis, x, Tlimit, currTime);
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
     }
 }

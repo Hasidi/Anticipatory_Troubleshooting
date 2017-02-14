@@ -211,10 +211,10 @@ namespace AnticipatoryTroubleShooting
             foreach (var comp in _troubleshooter._model._testComponents)
             {
                 model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
-                //model.updateSurvivalCurve(comp, 0.0000004);
+                //model.updateSurvivalCurve(comp, 0.0000001);
 
             }
-            //model.updateSurvivalCurve(4, 0.04);
+            //model.updateSurvivalCurve(4, ExperimentRunner.SURVIVAL_FACTOR_NEW);
         }
         //----------------------------------------------------------------------------------------------------------------------
 

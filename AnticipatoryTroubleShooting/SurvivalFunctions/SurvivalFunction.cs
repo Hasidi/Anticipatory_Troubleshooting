@@ -39,11 +39,11 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
         //    return (d1-d2);
         //}
         //-----------------------------------------------------------------------------------------------------------
-        public double FaultBetween(double Ur, double Ul, double currTime)
+        public double FaultBetween(double Ur, double Lr, double currTime)
         {
             //if (currAge > elspTime)
             //    throw new InvalidOperationException();
-            double ans = (survive(Ul) - survive(Ur)) / (survive(currTime));
+            double ans = (survive(Lr) - survive(Ur)) / (survive(currTime));
             return ans;
         }
         //-----------------------------------------------------------------------------------------------------------

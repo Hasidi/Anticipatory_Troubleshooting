@@ -70,8 +70,13 @@ namespace AnticipatoryTroubleShooting
             {
                 return _repairCost;
             }
-            else
+            if (fixType == ReapirType.REPLACE)
                 return _replaceCost;
+            if (fixType == ReapirType.NoAction)
+                return 0;
+            else
+                throw new InvalidProgramException();
+
         }
         public double sumFaultDistribution()
         {

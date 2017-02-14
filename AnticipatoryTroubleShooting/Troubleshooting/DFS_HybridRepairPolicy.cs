@@ -39,6 +39,20 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             _nIntervals = nIntervalsLookAhead;
             _sb = new StringBuilder();
             PATH += "lk_" + nIntervalsLookAhead +".txt";
+            _probsSeen = new List<double>();
+
+        }
+        public DFS_HybridRepairPolicy(TroubleShooter troubleshooter, int nIntervalsLookAhead, int compID)
+        {
+            _actions = new List<ReapirType>();
+            _actions.Add(ReapirType.FIX); _actions.Add(ReapirType.REPLACE);
+            _troubleshooter = troubleshooter;
+            _nIntervals = nIntervalsLookAhead;
+            _sb = new StringBuilder();
+            PATH += "lk_" + nIntervalsLookAhead + ".txt";
+            _probsSeen = new List<double>();
+            _compId = compID;
+
         }
         //-----------------------------------------------------------------------------------------------------------
         public ReapirType RepairComponentPolicy(Model model, int compID, double timeLimit, double currTime, out string policyString, out double repairCost)
@@ -74,7 +88,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
             _troubleshooter._model.updateComps(startState._comps);
 
-            repairCost = costAns - ExperimentRunner.OVERHEADCOST;
+            repairCost = _troubleshooter._model._components[compID].getRepairCost(repairAns);
             return repairAns;
 
         }
@@ -193,7 +207,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             {
                 if (currState._currTime == _Tlimit)
                 {
-                    currState._cost = _troubleshooter.repairComponent(_compId, ReapirType.FIX);
+                    currState._cost = _troubleshooter.repairComponent(_compId, ReapirType.FIX) + ExperimentRunner.OVERHEADCOST;
                     //return currState._cost;
                 }
                 else

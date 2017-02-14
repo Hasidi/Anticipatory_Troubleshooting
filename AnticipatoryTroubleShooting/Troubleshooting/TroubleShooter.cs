@@ -219,6 +219,9 @@ namespace AnticipatoryTroubleShooting
                 repairType = _repairPolicy.RepairComponentPolicy(_model, faultComp, timeLimit, currTime, out fixPolicyString, out repairCost);
                 
                 double currCost = repairComponent(faultComp, repairType); //////
+
+                if (_repairPolicy is Troubleshooting.HealthyReplacementRepairingPolicy)
+                    currCost = repairCost;  // זמני
                 totalFixCost += currCost;
                 TroubleshooterLoger._instance.printFixPolicy(repairType.ToString(), currCost, fixPolicyString);
             }
@@ -392,6 +395,8 @@ namespace AnticipatoryTroubleShooting
         private double sampleNewCompFault(Dictionary<int, List<Interval>> compsIntervalsDis, int compId, double Tlimit, double currTime)
         {
             List<Interval> timeDistribution = _worldAfterRepair.updateTimeDistributionVector(this, compsIntervalsDis, compId, Tlimit, currTime);
+          
+                //printIntervalList(timeDistribution, currTime);
             Interval newInterval = UsefulFunctions.createSample(timeDistribution);
             double faultTime;
             if (newInterval.Ur != -1)
@@ -557,6 +562,17 @@ namespace AnticipatoryTroubleShooting
             foreach (var x in intervalsToRemove)
                 compIntervals.Remove(x);
             
+        }
+
+
+        private void printIntervalList(List<Interval> intervals, double currTime)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var x in intervals)
+            {
+                sb.AppendLine(x.ToString());
+            }
+            Console.WriteLine(sb.ToString());
         }
 
     }

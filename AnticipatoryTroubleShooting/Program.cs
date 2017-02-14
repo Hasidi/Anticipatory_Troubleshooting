@@ -20,8 +20,8 @@ namespace AnticipatoryTroubleShooting
 
 
             //Model model2 = new Survival_IN_BayesModel("AlarmNetwork_.txt", "AlarmNetwork_Types.txt");
-            Model model2 = new Survival_IN_BayesModel("myDetails2.txt", "networkFileTypes2.txt");
-            Model model = new Survival_IN_BayesModel("myDetails.txt", "networkFileTypes.txt");
+            //Model model2 = new Survival_IN_BayesModel("myDetails2.txt", "networkFileTypes2.txt");
+            //Model model = new Survival_IN_BayesModel("myDetails.txt", "networkFileTypes.txt");
 
             //Diagnoser diagnoser = new Diagnoser(model, null, new ConstCostProbSelector());
             //TroubleShooter troubleshooter = new TroubleShooter(model, diagnoser, new HybridFixPolicy());
@@ -35,6 +35,8 @@ namespace AnticipatoryTroubleShooting
 
             //runExperimetnsOverTime3("myDetails2.txt", "networkFileTypes2.txt");
             runExperimetnsOverTimeDiffCost("myDetails2.txt", "networkFileTypes2.txt");
+
+            //runExperimetnsOverTimeDiffCost_EdgeCost("myDetails2.txt", "networkFileTypes2.txt");
             //System.Diagnostics.Process.GetCurrentProcess().Kill();
 
         }
@@ -217,7 +219,6 @@ namespace AnticipatoryTroubleShooting
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
 
-            algorithmsList.Add(new Troubleshooting.HealthyReplacementRepairingPolicy(troubleshooter,4), new TimeSpan());
 
 
             Stopwatch timer = new Stopwatch();
@@ -272,8 +273,8 @@ namespace AnticipatoryTroubleShooting
             algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
@@ -281,8 +282,11 @@ namespace AnticipatoryTroubleShooting
 
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
 
+            //algorithmsList.Add(new Troubleshooting.HealthyReplacementRepairingPolicy(troubleshooter, 3), new TimeSpan());
+
+
             experimentRunner.readFilesOverTime();
-            Random randomSeed = new Random(2);
+            Random randomSeed = new Random(50);
             List<Interval> intervalsCost = initCostIntervals();
             //List<int> randomSeeds = new List<int>() { 1, 2, 3, 4 };
 
@@ -291,7 +295,7 @@ namespace AnticipatoryTroubleShooting
                 ExperimentRunner.SURVIVAL_FACTOR_REDUCE = punishFactor[p];
                 foreach (var interval in intervalsCost)
                 { 
-                    for (int j = 0; j < 100; j++)
+                    for (int j = 0; j < 30; j++)
                     {
                         //UsefulFunctions.RANDOM = new Random();
                         List <double> costs = randCosts(interval, model._testComponents.Count);
@@ -338,10 +342,10 @@ namespace AnticipatoryTroubleShooting
 
         //-----------------------------------------------------------------------------------------------------------
 
-        public static List<double> randCosts(Interval interval, int n )
+        public static List<double> randCosts(Interval interval, int nTestComps )
         {
             List<double> ans = new List<double>();
-            for (int i=0; i<n; i++)
+            for (int i=0; i< nTestComps; i++)
             {
                 double d = UsefulFunctions.randFromSpecificRange(interval.Lr, interval.Ur);
                 ans.Add(d);
@@ -356,12 +360,13 @@ namespace AnticipatoryTroubleShooting
         {
             List<Interval> ans = new List<Interval>();
             //ans.Add(new Interval(0.1, 0.4));
-            //ans.Add(new Interval(0.4, 0.65));
+            ans.Add(new Interval(0.4, 0.65));
             //ans.Add(new Interval(0.3, 0.9));
             //ans.Add(new Interval(0.85, 0.95));
 
 
-            ans.Add(new Interval(0.7, 0.7));
+            ans.Add(new Interval(0.65, 0.75));
+            ans.Add(new Interval(0.75, 0.9));
 
             return ans;
 
@@ -371,11 +376,87 @@ namespace AnticipatoryTroubleShooting
 
 
 
+        public static void runExperimetnsOverTimeDiffCost_EdgeCost(string filePath, string compsTypesPath)
+        {
+            Model model = new Survival_IN_BayesModel(filePath, compsTypesPath);
+            Diagnoser diagnoser = new Diagnoser(model, null, new ConstCostProbSelector());
+            TroubleShooter troubleshooter = new TroubleShooter(model, diagnoser, new FixingRepairPolicyDecreasing());
+            diagnoser._troubleShooter = troubleshooter;
+            ExperimentRunner experimentRunner = new ExperimentRunner(troubleshooter);
+
+            //List<double> fixRatios = new List<double>() { 0.01, 0.05, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 0.85, 0.9, 0.95, 1 };
+            //List<double> punishFactor = new List<double>() { 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4};
+
+            //List<double> fixRatios = new List<double>() { 0.6 };
+            List<double> punishFactor = new List<double>() { 1.8 };
+
+            //List<double> punishFactor = new List<double>() {  1.8,2,2.1, 2.2,2.4 };
+
+            Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
+
+            algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
+            algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
+            algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
+
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
+
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 10), new TimeSpan());
+
+            //algorithmsList.Add(new Troubleshooting.HealthyReplacementRepairingPolicy(troubleshooter, 8), new TimeSpan());
+
+
+            experimentRunner.readFilesOverTime();
+            Random randomSeed = new Random(2);
+            List<Interval> intervalsCost = initCostIntervals();
+            //List<int> randomSeeds = new List<int>() { 1, 2, 3, 4 };
+
+            for (int p = 0; p < punishFactor.Count; p++)
+            {
+                ExperimentRunner.SURVIVAL_FACTOR_REDUCE = punishFactor[p];
+
+                for (int j = 0; j < 100; j++)
+                {
+                    //UsefulFunctions.RANDOM = new Random();
+                    List<double> costs = randCosts(model._testComponents.Count);
+                    int seed = randomSeed.Next();
+                    for (int a = 0; a < algorithmsList.Count; a++)
+                    {
+                        ITroubleShooterRepairingPolicy algorithm = algorithmsList.ElementAt(a).Key;
+
+                        UsefulFunctions.RANDOM = new Random(seed);
+
+                        experimentRunner.runSingleExperimentOverTime(40, new DecresingSurival(), algorithm, new List<int>(), costs, -1);
+                    }
+                }
+                
+
+                Console.WriteLine("done");
+                //UsefulFunctions.RANDOM = new Random(10);
+
+            }
+            Console.WriteLine("All Done");
+
+        }
 
 
 
-
-
+        public static List<double> randCosts(int nComps)
+        {
+            List<double> costRatiosToSampleFrom = new List<double>() { 0.4, 0.9 };
+            List<double> ans = new List<double>();
+            for (int i = 0; i < nComps; i++)
+            {
+                double d = UsefulFunctions.randFromGivenSet(costRatiosToSampleFrom);
+                ans.Add(d);
+            }
+            return ans;
+        }
 
 
 

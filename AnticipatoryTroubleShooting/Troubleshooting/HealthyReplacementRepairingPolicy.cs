@@ -11,11 +11,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         double _currTime;
         DFS_HybridRepairPolicy _repairPolicy;
         TroubleShooter _troubleshooter;
+        int _lastHealthyReplaced = -1;
+        HashSet<int> _HealthComponentsReplaced;
 
         public HealthyReplacementRepairingPolicy(TroubleShooter troubleshooter, int nIntervalsLookAhead)
         {
             _troubleshooter = troubleshooter;
             _repairPolicy = new DFS_HybridRepairPolicy(troubleshooter, nIntervalsLookAhead);
+            _HealthComponentsReplaced = new HashSet<int>();
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -23,7 +26,10 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         {
             _currTime = currTime;
             double costAns;
+            if (_HealthComponentsReplaced.Contains(compID))
+                costAns = 0; // זה סתם לדיבאג, ל0 אין משמעות
             ReapirType repairType = _repairPolicy.RepairComponentPolicy(model, compID, timeLimit, currTime, out policyString, out costAns);
+            _HealthComponentsReplaced.Remove(compID);
             repairCost = costAns;
 
             Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, compID, timeLimit);
@@ -34,12 +40,12 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             return repairType;
         }
         //-----------------------------------------------------------------------------------------------------------
-        public Dictionary<int, ReapirType> GetHelathCompsPolicy(Model model, int faultComp, double timeLimit, double currTime)
-        {
-            _currTime = currTime;
-            Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, faultComp, timeLimit);
-            return healthPolicy;
-        }
+        //public Dictionary<int, ReapirType> GetHelathCompsPolicy(Model model, int faultComp, double timeLimit, double currTime)
+        //{
+        //    _currTime = currTime;
+        //    Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, faultComp, timeLimit);
+        //    return healthPolicy;
+        //}
         //-----------------------------------------------------------------------------------------------------------
         private double repairHealth(Dictionary<int, ReapirType> healthPolicy)
         {
@@ -63,6 +69,10 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
                 if (ShouldReplaceComp(model, comp, timeLimit))
                 {
                     dicAns.Add(comp, ReapirType.REPLACE);
+                    _lastHealthyReplaced = comp;
+                    _HealthComponentsReplaced.Add(comp);
+                    //Console.WriteLine(1);
+
                 }
                 else
                 {
@@ -75,30 +85,42 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         //-----------------------------------------------------------------------------------------------------------
         private bool ShouldReplaceComp(Model model, int healthComp, double timeLimit)
         {
+            _repairPolicy = new DFS_HybridRepairPolicy(_troubleshooter, _repairPolicy._nIntervals, healthComp);
+
             List<Interval> compIntervals = _repairPolicy.createIntervals(_currTime, timeLimit, healthComp);
             double nextTime = compIntervals.First().Ur;
-            State startState = new State(_currTime, 0, true, null, _troubleshooter);
             List<Interval> intervalsCopy = new List<Interval>(compIntervals);
+            State startState = new State(_currTime, 0, true, null, _troubleshooter);
 
             double repairCost = _troubleshooter.repairComponent(healthComp, ReapirType.REPLACE); //update only the specific repair comp
             _troubleshooter._model.updateCompsAges(nextTime - _currTime);
             compIntervals.RemoveAt(0);
-            State ReplaceState = new State(nextTime, 0, false, startState, _troubleshooter);
-            double ExpecReplaceCost = _repairPolicy.computeCost(startState, compIntervals) + model._components[healthComp]._replaceCost;
+
+            State ReplaceState = new State(nextTime, startState._currTime, false, startState, _troubleshooter);
+            double ExpecReplaceCost = _repairPolicy.computeCost(ReplaceState, compIntervals);
+            ExpecReplaceCost += model._components[healthComp]._replaceCost;
 
 
 
             _troubleshooter._model.updateComps(startState._comps);
             _troubleshooter._model.updateCompsAges(nextTime - _currTime);
             compIntervals = intervalsCopy;
-            State NoActionState = new State(nextTime, 0, false, startState, _troubleshooter);
-            double ExpecNoActionCost = _repairPolicy.computeCost(startState, compIntervals);
+            //startState = new State(_currTime, 0, false, null, _troubleshooter);
+
+            State NoActionState = new State(nextTime, startState._currTime, false, startState, _troubleshooter);
+            double ExpecNoActionCost = _repairPolicy.computeCost(NoActionState, compIntervals);
 
             _troubleshooter._model.updateComps(startState._comps);
 
             return (ExpecReplaceCost <= ExpecNoActionCost);
         }
         //-----------------------------------------------------------------------------------------------------------
+        public override string ToString()
+        {
+            return "HealthReplaceLK_" + _repairPolicy._nIntervals;
+        }
+        //-----------------------------------------------------------------------------------------------------------
+
 
     }
 }

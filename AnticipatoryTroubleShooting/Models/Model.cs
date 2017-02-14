@@ -115,7 +115,9 @@ namespace AnticipatoryTroubleShooting
         //-----------------------------------------------------------------------------------------------------------
         public void sampleControlComponents()
         {
-            int val = UsefulFunctions.randFromGivenSet(new List<int>() { 0, 1 });
+            //int val = UsefulFunctions.randFromGivenSet(new List<int>() { 0, 1 });
+            int val = 1;
+
             foreach (var comp in _controlComponents)
             {
                 if (comp == _components.Count-1)
@@ -123,7 +125,7 @@ namespace AnticipatoryTroubleShooting
                 //double[] distribution = getComponentDistribution(comp);
                 //int value = UsefulFunctions.createSample(distribution);
                 _components[comp].updateObserveValue(val);
-                val = UsefulFunctions.randFromGivenSet(new List<int>() { 0, 1 });
+                //val = UsefulFunctions.randFromGivenSet(new List<int>() { 0, 1 });
             }
             _components[_components.Count - 1].updateObserveValue(1);
         }

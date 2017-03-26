@@ -84,12 +84,12 @@ namespace AnticipatoryTroubleShooting
             //    throw new Exception();
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
             svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewFixCurve(svModel._components[compID]._survivalFactor));
-            double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
+            double futureFixFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
 
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * futureFixFault;
 
             svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewCurve());
-            double futureReplaceFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
+            double futureReplaceFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
 
             double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * futureReplaceFault;
 

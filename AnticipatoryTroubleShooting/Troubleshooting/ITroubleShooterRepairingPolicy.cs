@@ -83,18 +83,14 @@ namespace AnticipatoryTroubleShooting
             //if (Math.Abs(comp._age - currTime) > 0.001)
             //    throw new Exception();
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
-            svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
-            double futureFixFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
-            //double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
+            svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewFixCurve(svModel._components[compID]._survivalFactor));
+            double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
 
-            //double futureFixCostEstimated = comp._repairCost + comp._replaceCost * (1 - futureFixSurvive);
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * futureFixFault;
 
-            svModel._survivalCurves[compID].setParameter(ExperimentRunner.SURVIVAL_FACTOR_NEW);
-            double futureReplaceFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
-            //double futureFixFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
+            svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewCurve());
+            double futureReplaceFault = svModel._survivalCurves[compID].FaultBetween(Tlimit, currTime, currTime);
 
-            //double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * (1 - futureReplaceSurvive);
             double futureReplaceCostEstimated = comp._replaceCost + comp._replaceCost * futureReplaceFault;
 
             //policyString = "comp.age = " + comp._age + ", currTime = " + currTime + Environment.NewLine + "future-Fix-survive = " + futureFixSurvive + Environment.NewLine + "future-Replace-survive = " + futureReplaceSurvive;

@@ -52,7 +52,7 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
         //-----------------------------------------------------------------------------------------------------------
         public double faultProb(double Ur, double Lr, double currTime)
         {
-            double ans = survive(Lr - elspTime) - survive(Ur - elspTime);
+            double ans = survive(Lr - currTime) - survive(Ur - currTime);
             //double ans = (survive(Lr) - survive(Ur)) / (survive(currTime));
             return ans; 
         }

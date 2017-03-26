@@ -154,13 +154,13 @@ namespace AnticipatoryTroubleShooting
             if (repairAction == ReapirType.FIX)
             {
                 comp._age = 0;
-                svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+                svModel.updateSurvivalCurve(compID, ExperimentRunner.getNewFixCurve(comp._survivalFactor));
                 //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
             }
             if (repairAction == ReapirType.REPLACE)
             {
                 comp._age = 0;
-                svModel.updateSurvivalCurve(compID, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+                svModel.updateSurvivalCurve(compID, ExperimentRunner.getNewCurve());
             }
 
             return repairCost;

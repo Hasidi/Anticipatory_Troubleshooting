@@ -33,7 +33,7 @@ namespace AnticipatoryTroubleShooting
         
         public static double REPLACE_COST = 10;
         private static double SURVIVAL_FACTOR_NEW = 0.05;
-        public static double OVERHEADCOST = 20;
+        public static double OVERHEADCOST = 5;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
 
@@ -459,10 +459,11 @@ namespace AnticipatoryTroubleShooting
 
         public static double getNewFixCurve(double currCurve)
         {
-            
+            //return currCurve * SURVIVAL_FACTOR_REDUCE;
+            return SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE;
         }
 
-        public static double getNewCurve(double currCurve)
+        public static double getNewCurve()
         {
             return SURVIVAL_FACTOR_NEW;
         }

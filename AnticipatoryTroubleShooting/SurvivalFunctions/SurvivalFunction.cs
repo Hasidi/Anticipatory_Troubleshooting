@@ -44,12 +44,16 @@ namespace AnticipatoryTroubleShooting.SurvivalFunctions
             //if (currAge > elspTime)
             //    throw new InvalidOperationException();
             double ans = (survive(Lr) - survive(Ur)) / (survive(currTime));
+            double delta = Ur - Lr;
+            //double ans = (survive(Lr + delta)) / (survive(currTime));
+
             return ans;
         }
         //-----------------------------------------------------------------------------------------------------------
-        public double faultProb(double Ur, double Lr, double elspTime)
+        public double faultProb(double Ur, double Lr, double currTime)
         {
             double ans = survive(Lr - elspTime) - survive(Ur - elspTime);
+            //double ans = (survive(Lr) - survive(Ur)) / (survive(currTime));
             return ans; 
         }
 

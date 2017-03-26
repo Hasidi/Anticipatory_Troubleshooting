@@ -21,6 +21,7 @@ namespace AnticipatoryTroubleShooting
         public IWorldAfterRepair _worldAfterRepair;
         public static double EPSILON = 0.001;
 
+        public int nhealthyReplaced = 0;
         public static double MIN_HOP;
         #region constants
         double OBSERVE_SYSTEM_COST = 1;
@@ -604,6 +605,9 @@ namespace AnticipatoryTroubleShooting
         {
             foreach (int x in healthReplaced)
             {
+                //(1)delete current fault
+                faultQ.Remove(x);
+                //(2)sample new fault
                 double newFaultTime = sampleNewCompFault(compsIntervalsDis, x, Tlimit, currTime);
                 if (newFaultTime != -1)
                     faultQ[x] = newFaultTime;
@@ -641,6 +645,8 @@ namespace AnticipatoryTroubleShooting
             CreatorOverTimeLoger._instance.markIntervalsProbs2(compsIntervalsDis, _model);
             double prevTime = 0;
             int i = 0;
+
+            nhealthyReplaced = 0;
             while (faultsQueue.Count > 0) //note : new element can add during the loop - therefore using while
             {
                 TroubleshooterLoger._instance.writeText("fault Queue: " + faultQtoString(faultsQueue));
@@ -698,6 +704,8 @@ namespace AnticipatoryTroubleShooting
                         cutNewIntervals(currFaultTime, x, compsIntervalsDis);
                     }
                     rearrangeFaultQueue(faultsQueue, blabla._HealthComponentsReplaced, compsIntervalsDis, Tlimit, currFaultTime);
+
+                    nhealthyReplaced += blabla._HealthComponentsReplaced.Count;
                 }
 
                 CreatorOverTimeLoger._instance.markIntervalsProbs2(compsIntervalsDis, _model);

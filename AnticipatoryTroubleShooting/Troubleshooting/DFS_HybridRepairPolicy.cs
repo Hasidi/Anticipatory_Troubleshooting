@@ -52,6 +52,8 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             PATH += "lk_" + nIntervalsLookAhead + ".txt";
             _probsSeen = new List<double>();
             _compId = compID;
+            if (File.Exists(PATH))
+                File.Delete(PATH);
 
         }
         //-----------------------------------------------------------------------------------------------------------
@@ -64,7 +66,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             ReapirType repairAns = ReapirType.FIX;
 
             _compId = compID;
-
+            _sb.AppendLine("Consider policy to COMP. " + _compId);
             _realityTime = currTime;
             _Tlimit = timeLimit;
 

@@ -25,6 +25,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         public ReapirType RepairComponentPolicy(Model model, int compID, double timeLimit, double currTime, out string policyString, out double repairCost)
         {
             _currTime = currTime;
+            //Console.WriteLine("curr healthy time: " + _currTime);
             double costAns;
             if (_HealthComponentsReplaced.Contains(compID))
                 costAns = 0; // זה סתם לדיבאג, ל0 אין משמעות
@@ -115,7 +116,14 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
 
             _troubleshooter._model.updateComps(startState._comps);
 
-            return (ExpecReplaceCost <= ExpecNoActionCost);
+            if (ExpecReplaceCost <= ExpecNoActionCost)
+            {
+                //Console.WriteLine("choose to replace health COMP. "+ healthComp);
+                return true;
+            }
+            //Console.WriteLine(ExpecReplaceCost - ExpecNoActionCost);
+            return false;
+            //return (ExpecReplaceCost <= ExpecNoActionCost);
         }
         //-----------------------------------------------------------------------------------------------------------
         public override string ToString()

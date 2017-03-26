@@ -32,8 +32,8 @@ namespace AnticipatoryTroubleShooting
         public static int N_INTERVALS = 20;
         
         public static double REPLACE_COST = 10;
-        public static double SURVIVAL_FACTOR_NEW = 0.05;
-        public static double OVERHEADCOST = 150;
+        private static double SURVIVAL_FACTOR_NEW = 0.05;
+        public static double OVERHEADCOST = 20;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
 
@@ -128,7 +128,7 @@ namespace AnticipatoryTroubleShooting
                 //troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults);
                double totalCost = _troubleshooter.troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults, out nFix, out nReplace);
 
-               AddCSVLine(_troubleshooter._repairPolicy, FIX_RATIO, Tlimit, nFaults, nFix, nReplace, totalCost);
+               AddCSVLine(_troubleshooter._repairPolicy, FIX_RATIO, Tlimit, nFaults, nFix, nReplace, _troubleshooter.nhealthyReplaced, totalCost);
 
                resetAges(); initSurvivals();
                 _troubleshooter.initTroubleshooter();
@@ -154,7 +154,7 @@ namespace AnticipatoryTroubleShooting
             //troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults);
             double totalCost = _troubleshooter.troubleshootingOverTime(fixPolicy, Tlimit, N_INTERVALS, new Dictionary<int, int>(), out nFaults, out nFix, out nReplace);
 
-            AddCSVLine(_troubleshooter._repairPolicy, maxRatio, Tlimit, nFaults, nFix, nReplace, totalCost);
+            AddCSVLine(_troubleshooter._repairPolicy, maxRatio, Tlimit, nFaults, nFix, nReplace, _troubleshooter.nhealthyReplaced, totalCost);
 
             resetAges(); initSurvivals();
             _troubleshooter.initTroubleshooter();
@@ -211,10 +211,12 @@ namespace AnticipatoryTroubleShooting
             foreach (var comp in _troubleshooter._model._testComponents)
             {
                 model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+                //model.updateSurvivalCurve(comp, ExperimentRunner.SURVIVAL_FACTOR_NEW * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
+                
                 //model.updateSurvivalCurve(comp, 0.0000001);
 
             }
-            //model.updateSurvivalCurve(4, ExperimentRunner.SURVIVAL_FACTOR_NEW);
+            model.updateSurvivalCurve(7, ExperimentRunner.SURVIVAL_FACTOR_NEW);
         }
         //----------------------------------------------------------------------------------------------------------------------
 
@@ -324,7 +326,7 @@ namespace AnticipatoryTroubleShooting
             File.AppendAllText(CSV_FILE_overTime, sb.ToString());
         }
 
-        private void AddCSVLine(ITroubleShooterRepairingPolicy fixAlgo, double fixRatio, double timeLimit, int nFaults, int nFix, int nReplace, double totalCost)
+        private void AddCSVLine(ITroubleShooterRepairingPolicy fixAlgo, double fixRatio, double timeLimit, int nFaults, int nFix, int nReplace, int nHelathyReplaced, double totalCost)
         {
             //string Experiment_path_txt_ = CommonDefines.Experiment_path_txt;
             var sb = new StringBuilder();
@@ -333,13 +335,13 @@ namespace AnticipatoryTroubleShooting
             if (!File.Exists(CSV_FILE_overTime))
             {
                 File.Create(CSV_FILE_overTime).Close();
-                var Title = new[] { new[] { "fixAlgo :", "FixRatio :", "PunishFactor: ", "Time-Limit :", "nFaults", "nFix", "nReplace", "TotalCost" } };
+                var Title = new[] { new[] { "fixAlgo :", "FixRatio :", "PunishFactor: ", "Time-Limit :", "nFaults", "nFix", "nReplace", "nHealthyReplaced", "TotalCost" } };
                 length = Title.GetLength(0);
                 for (int index = 0; index < length; index++)
                     sb.AppendLine(string.Join(delimiter, Title[index]));
             }
 
-            var output = new[] { new[] { fixAlgo.ToString(), fixRatio.ToString(), SURVIVAL_FACTOR_REDUCE.ToString(), timeLimit.ToString(), nFaults.ToString(), nFix.ToString(), nReplace.ToString(), totalCost.ToString() } };
+            var output = new[] { new[] { fixAlgo.ToString(), fixRatio.ToString(), SURVIVAL_FACTOR_REDUCE.ToString(), timeLimit.ToString(), nFaults.ToString(), nFix.ToString(), nReplace.ToString(), nHelathyReplaced.ToString(), totalCost.ToString() } };
             length = output.GetLength(0);
             for (int index = 0; index < length; index++)
                 sb.AppendLine(string.Join(delimiter, output[index]));
@@ -454,6 +456,16 @@ namespace AnticipatoryTroubleShooting
         #endregion
 
         //----------------------------------------------------------------------------------------------------------------------
+
+        public static double getNewFixCurve(double currCurve)
+        {
+            
+        }
+
+        public static double getNewCurve(double currCurve)
+        {
+            return SURVIVAL_FACTOR_NEW;
+        }
 
     }
 }

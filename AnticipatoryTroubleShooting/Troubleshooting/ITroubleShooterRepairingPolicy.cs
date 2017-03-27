@@ -83,7 +83,9 @@ namespace AnticipatoryTroubleShooting
             //if (Math.Abs(comp._age - currTime) > 0.001)
             //    throw new Exception();
             SurvivalBayesModel svModel = (SurvivalBayesModel)model;
-            svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewFixCurve(svModel._components[compID]._survivalFactor));
+
+            double oldAge = comp._age;
+            svModel._survivalCurves[compID].setParameter(ExperimentRunner.getNewFixCurve(svModel._components[compID]._survivalFactor, oldAge));
             double futureFixFault = svModel._survivalCurves[compID].faultProb(Tlimit, currTime, currTime);
 
             double futureFixCostEstimated = comp._repairCost + comp._replaceCost * futureFixFault;

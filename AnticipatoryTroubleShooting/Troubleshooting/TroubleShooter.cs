@@ -153,8 +153,9 @@ namespace AnticipatoryTroubleShooting
             double repairCost = _model._components[compID].getRepairCost(repairAction);
             if (repairAction == ReapirType.FIX)
             {
+                double oldAge = comp._age;
                 comp._age = 0;
-                svModel.updateSurvivalCurve(compID, ExperimentRunner.getNewFixCurve(comp._survivalFactor));
+                svModel.updateSurvivalCurve(compID, ExperimentRunner.getNewFixCurve(comp._survivalFactor, oldAge));
                 //svModel.updateSurvivalCurve(compID, comp._survivalFactor * ExperimentRunner.SURVIVAL_FACTOR_REDUCE);
             }
             if (repairAction == ReapirType.REPLACE)
@@ -422,7 +423,8 @@ namespace AnticipatoryTroubleShooting
             List<Interval> timeDistribution = _worldAfterRepair.updateTimeDistributionVector(this, compsIntervalsDis, compId, Tlimit, currTime);
           
                 //printIntervalList(timeDistribution, currTime);
-            Interval newInterval = UsefulFunctions.createSample(timeDistribution);
+            double randNum = -1;
+            Interval newInterval = UsefulFunctions.createSample(timeDistribution, out randNum);
             double faultTime;
             if (newInterval.Ur != -1)
             {
@@ -649,10 +651,17 @@ namespace AnticipatoryTroubleShooting
             nhealthyReplaced = 0;
             while (faultsQueue.Count > 0) //note : new element can add during the loop - therefore using while
             {
+                
+
                 TroubleshooterLoger._instance.writeText("fault Queue: " + faultQtoString(faultsQueue));
 
                 KeyValuePair<int, double> currFault = UsefulFunctions.getMinValueFromDic(faultsQueue);
                 int currFaultComp = currFault.Key; double currFaultTime = currFault.Value;
+
+                if (currFaultComp == 14)
+                {
+                    int debug = 0;
+                }
                 nFaults++;
                 if (currFaultTime < prevTime)
                     throw new InvalidProgramException();
@@ -665,9 +674,7 @@ namespace AnticipatoryTroubleShooting
                 removeOldIntervals(currFaultTime, compsIntervalsDis, currFaultComp);
 
                 List<Interval> IntervalsCopy = new List<Interval>(compsIntervalsDis[currFaultComp]);
-                //bool checkInterval = checkIntervals(IntervalsCopy);
-                //if (!checkInterval)
-                //    Console.WriteLine();
+
                 Dictionary<int, Component> testCompCopy = _model.getTestsComponentsCopy(); //
                 ReapirType currRepairAction;
                 double cost = fixSystemConsiderTime(revealedSensors, Tlimit, currFaultTime, currFaultComp, IntervalsCopy, out currRepairAction);
@@ -689,6 +696,7 @@ namespace AnticipatoryTroubleShooting
                     cutNewIntervals(currFaultTime, currFaultComp, compsIntervalsDis);
 
                 double newFaultTime = sampleNewCompFault(compsIntervalsDis, currFaultComp, Tlimit, currFaultTime);
+
                 if (newFaultTime != -1)
                 {
                     faultsQueue.Add(currFaultComp, newFaultTime);

@@ -9,6 +9,7 @@ namespace AnticipatoryTroubleShooting
     class UsefulFunctions
     {
         public static Random RANDOM = new Random(1);
+        public static double LAST_RAND;
         //-----------------------------------------------------------------------------------------------------------------------------
         //create sample according to a given distribution- eq. the value that will choose be the one with the most probability
         public static int createSample(double[] distributionArray)
@@ -23,6 +24,7 @@ namespace AnticipatoryTroubleShooting
                 }
                 //Random random = new Random();
                 double rand = RANDOM.NextDouble();
+                LAST_RAND = rand;
                 //Console.WriteLine("createSample: " +rand);
                 for (int i = 0; i < ranges.Length; i++)
                 {
@@ -220,7 +222,7 @@ namespace AnticipatoryTroubleShooting
         //}
         //--------------------------------------------------------------------------------------------------------------
 
-        public static Interval createSample(List<Interval> timeDistribution)
+        public static Interval createSample(List<Interval> timeDistribution, out double randNum)
         {
             double[] dis = new double[timeDistribution.Count];
             int c = 0;
@@ -231,6 +233,7 @@ namespace AnticipatoryTroubleShooting
             }
             int cPlace = createSample(dis);
             Interval ans = timeDistribution.ElementAt(cPlace);
+            randNum = LAST_RAND;
             return ans;
         }
 

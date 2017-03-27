@@ -336,13 +336,13 @@ namespace AnticipatoryTroubleShooting
             if (!File.Exists(CSV_FILE_overTime))
             {
                 File.Create(CSV_FILE_overTime).Close();
-                var Title = new[] { new[] { "fixAlgo :", "FixRatio :", "PunishFactor: ", "Time-Limit :", "nFaults", "nFix", "nReplace", "nHealthyReplaced", "TotalCost" } };
+                var Title = new[] { new[] { "fixAlgo :", "FixRatio :", "PunishFactor: ", "Time-Limit :", "nFaults", "nFix", "nReplace", "nHealthyReplaced", "overHeadRatio", "TotalCost" } };
                 length = Title.GetLength(0);
                 for (int index = 0; index < length; index++)
                     sb.AppendLine(string.Join(delimiter, Title[index]));
             }
 
-            var output = new[] { new[] { fixAlgo.ToString(), fixRatio.ToString(), SURVIVAL_FACTOR_REDUCE.ToString(), timeLimit.ToString(), nFaults.ToString(), nFix.ToString(), nReplace.ToString(), nHelathyReplaced.ToString(), totalCost.ToString() } };
+            var output = new[] { new[] { fixAlgo.ToString(), fixRatio.ToString(), SURVIVAL_FACTOR_REDUCE.ToString(), timeLimit.ToString(), nFaults.ToString(), nFix.ToString(), nReplace.ToString(), nHelathyReplaced.ToString(), OVERHEAD_RATIO.ToString(), totalCost.ToString() } };
             length = output.GetLength(0);
             for (int index = 0; index < length; index++)
                 sb.AppendLine(string.Join(delimiter, output[index]));
@@ -458,11 +458,20 @@ namespace AnticipatoryTroubleShooting
 
         //----------------------------------------------------------------------------------------------------------------------
 
-        public static double getNewFixCurve(double currCurve)
+        public static double getNewFixCurve(double currCurve, double currTime)
         {
-            return currCurve * SURVIVAL_FACTOR_REDUCE;
-            //return SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE;
-            //return OVERHEAD_RATIO * SURVIVAL_FACTOR_NEW;
+            SurvivalFunctions.SurvivalFunction survFunc = new SurvivalFunctions.WeibullCurve(SURVIVAL_FACTOR_NEW);
+            double newCurvProb = survFunc.survive(currTime);
+            survFunc.setParameter(currCurve);
+            double oldCurvProb = survFunc.survive(currTime);
+            double ageFactor = (oldCurvProb / newCurvProb);
+            if (ageFactor < 1)
+                ageFactor ++;
+
+            //double ans =  currCurve * SURVIVAL_FACTOR_REDUCE;
+            double ans =  SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE * ageFactor;
+
+            return ans;
         }
 
         public static double getNewCurve()

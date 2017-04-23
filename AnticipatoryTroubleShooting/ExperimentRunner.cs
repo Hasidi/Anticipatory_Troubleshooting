@@ -29,10 +29,10 @@ namespace AnticipatoryTroubleShooting
         string _folderName;
         string _maxAgeDiff;
         int _nFaultsDuringTime = 0;
-        public static int N_INTERVALS = 20;
+        public static int N_INTERVALS = 50;
         
         public static double REPLACE_COST = 10;
-        private static double SURVIVAL_FACTOR_NEW = 0.05;
+        private static double SURVIVAL_FACTOR_NEW = 0.04;
         public static double OVERHEADCOST = 15;
         public static double FIX_RATIO = 0;
         public static double SURVIVAL_FACTOR_REDUCE;
@@ -462,14 +462,19 @@ namespace AnticipatoryTroubleShooting
         {
             SurvivalFunctions.SurvivalFunction survFunc = new SurvivalFunctions.WeibullCurve(SURVIVAL_FACTOR_NEW);
             double newCurvProb = survFunc.survive(currTime);
-            survFunc.setParameter(currCurve);
+            survFunc.setParameter(SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE);
             double oldCurvProb = survFunc.survive(currTime);
-            double ageFactor = (oldCurvProb / newCurvProb);
-            if (ageFactor < 1)
-                ageFactor ++;
+            double ageFactor = 1-(oldCurvProb / newCurvProb);
+            //double ageFactor = (newCurvProb - oldCurvProb);
 
-            //double ans =  currCurve * SURVIVAL_FACTOR_REDUCE;
-            double ans =  SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE * ageFactor;
+            //if (ageFactor > 0)
+            //    Console.WriteLine(ageFactor);
+
+            //double ans = currCurve * SURVIVAL_FACTOR_REDUCE;
+            //double ans = SURVIVAL_FACTOR_NEW * SURVIVAL_FACTOR_REDUCE;
+
+            double ans = SURVIVAL_FACTOR_NEW * (ageFactor + 1.4);
+            //Console.WriteLine(ans);
 
             return ans;
         }

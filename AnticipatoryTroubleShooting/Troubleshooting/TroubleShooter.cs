@@ -23,6 +23,8 @@ namespace AnticipatoryTroubleShooting
 
         public int nhealthyReplaced = 0;
         public static double MIN_HOP;
+
+        static bool accordingPolicy = true;
         #region constants
         double OBSERVE_SYSTEM_COST = 1;
         #endregion
@@ -505,10 +507,9 @@ namespace AnticipatoryTroubleShooting
 
         private void cutNewIntervals(double oldFaultTime, int compID, Dictionary<int, List<Interval>> compsIntervalsDis)
         {
-            //double minHop = (_Tlimit - 0) / _nIntervals;
-            //double minHop = _Tlimit / _nIntervals;
-            double Ninterval = ((_Tlimit - oldFaultTime) / _Tlimit) * (_nIntervals);
-            double hop = _Tlimit / (double)(Math.Ceiling(Ninterval));
+            double hop = Math.Ceiling(_Tlimit / _nIntervals);
+            //double Ninterval = ((_Tlimit - oldFaultTime) / _Tlimit) * (_nIntervals);
+            //double hop = _Tlimit / (double)(Math.Ceiling(Ninterval));
             MIN_HOP = hop;
             List<Interval> dist = new List<Interval>();
             double currTime = oldFaultTime;
@@ -648,6 +649,8 @@ namespace AnticipatoryTroubleShooting
             double prevTime = 0;
             int i = 0;
 
+            bool asPolicy = true;
+            Dictionary<int, ReapirType> dicLastRepair = lastRepairDic();
             nhealthyReplaced = 0;
             while (faultsQueue.Count > 0) //note : new element can add during the loop - therefore using while
             {
@@ -678,6 +681,12 @@ namespace AnticipatoryTroubleShooting
                 Dictionary<int, Component> testCompCopy = _model.getTestsComponentsCopy(); //
                 ReapirType currRepairAction;
                 double cost = fixSystemConsiderTime(revealedSensors, Tlimit, currFaultTime, currFaultComp, IntervalsCopy, out currRepairAction);
+
+                bool b = checkPolicy(currRepairAction, dicLastRepair[currFaultComp]);
+                if (!b)
+                    accordingPolicy = false;
+                dicLastRepair[currFaultComp] = currRepairAction;
+
                 Component copyComp = new Component(_model._components[currFaultComp]);
                 if (currRepairAction == ReapirType.FIX)
                     nFix++;
@@ -739,6 +748,30 @@ namespace AnticipatoryTroubleShooting
             return sb.ToString();
         }
 
+
+        private Dictionary<int, ReapirType> lastRepairDic()
+        {
+            Dictionary<int, ReapirType> ans = new Dictionary<int, ReapirType>();
+            foreach (var x in _model._testComponents)
+            {
+                ans.Add(x, ReapirType.REPLACE);
+            }
+            return ans;
+        }
+
+
+        private bool checkPolicy(ReapirType currRepair, ReapirType prevRepair)
+        {
+            if (currRepair != prevRepair)
+            {
+                if (prevRepair == ReapirType.REPLACE && currRepair == ReapirType.FIX)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
 
     }
 }

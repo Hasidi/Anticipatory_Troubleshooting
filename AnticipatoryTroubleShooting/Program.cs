@@ -374,15 +374,15 @@ namespace AnticipatoryTroubleShooting
             //ans.Add(new Interval(0.4, 0.65));
             //ans.Add(new Interval(0.3, 0.9));
             //ans.Add(new Interval(0.85, 0.95));
-           
-            
-            //ans.Add(new Interval(0.3, 0.3));
-            //ans.Add(new Interval(0.4, 0.4));
-            //ans.Add(new Interval(0.5, 0.5));
-            //ans.Add(new Interval(0.6, 0.6));
+
+            ans.Add(new Interval(0.2, 0.2));
+            ans.Add(new Interval(0.3, 0.3));
+            ans.Add(new Interval(0.4, 0.4));
+            ans.Add(new Interval(0.5, 0.5));
+            ans.Add(new Interval(0.6, 0.6));
             ans.Add(new Interval(0.7, 0.7));
-            //ans.Add(new Interval(0.8, 0.8));
-            //ans.Add(new Interval(0.85, 0.85));
+            ans.Add(new Interval(0.8, 0.8));
+            ans.Add(new Interval(0.9, 0.9));
 
             //ans.Add(new Interval(0.75, 0.9));
 
@@ -496,20 +496,20 @@ namespace AnticipatoryTroubleShooting
 
             Dictionary<ITroubleShooterRepairingPolicy, TimeSpan> algorithmsList = new Dictionary<ITroubleShooterRepairingPolicy, TimeSpan>();
 
-            //algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
-            //algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
+            algorithmsList.Add(new FixingRepairPolicyDecreasing(), new TimeSpan());
+            algorithmsList.Add(new ReplacingRepairPolicy(), new TimeSpan());
 
 
             //algorithmsList.Add(new HybridRepairPolicyDecreasing(), new TimeSpan());
             //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 1), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 2), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 3), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 4), new TimeSpan());
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 5), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 5), new TimeSpan());
 
-            algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
+            //algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 6), new TimeSpan());
 
             algorithmsList.Add(new Troubleshooting.DFS_HybridRepairPolicy(troubleshooter, 8), new TimeSpan());
 

@@ -19,7 +19,8 @@ namespace AnticipatoryTroubleShooting.Models
             foreach (var compNum in _testComponents)
             {
                 Component testComponent = _components[compNum];
-                _survivalCurves.Add(compNum,  new ExponentialDecayCurve(testComponent._survivalFactor));
+                //_survivalCurves.Add(compNum, new ExponentialDecayCurve(testComponent._survivalFactor));
+                _survivalCurves.Add(compNum, new WeibullCurve(testComponent._survivalFactor));
 
             }
 

@@ -46,7 +46,7 @@ namespace AnticipatoryTroubleShooting
 
             //runExperiments("myDetails.txt", "networkFileTypes.txt");
 
-            //runExperimetnsOverTime3("myDetails2.txt", "networkFileTypes2.txt");
+            runExperimetnsOverTime3("myDetails2.txt", "networkFileTypes2.txt");
             //runExperimetnsOverTimeDiffCost("myDetails2.txt", "networkFileTypes2.txt");
 
             //runExperimetnsOverTimeDiffCost_EdgeCost("myDetails2.txt", "networkFileTypes2.txt");

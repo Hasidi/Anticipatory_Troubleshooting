@@ -12,7 +12,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         DFS_HybridRepairPolicy _repairPolicy;
         TroubleShooter _troubleshooter;
         int _lastHealthyReplaced = -1;
-        HashSet<int> _HealthComponentsReplaced;
+        public HashSet<int> _HealthComponentsReplaced;
 
         public HealthyReplacementRepairingPolicy(TroubleShooter troubleshooter, int nIntervalsLookAhead)
         {
@@ -28,31 +28,31 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             double costAns;
             if (_HealthComponentsReplaced.Contains(compID))
                 costAns = 0; // זה סתם לדיבאג, ל0 אין משמעות
+
+            _HealthComponentsReplaced = new HashSet<int>();
             ReapirType repairType = _repairPolicy.RepairComponentPolicy(model, compID, timeLimit, currTime, out policyString, out costAns);
             _HealthComponentsReplaced.Remove(compID);
             repairCost = costAns;
 
             Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, compID, timeLimit);
-            double healthCost = repairHealth(healthPolicy);
+            double healthCost = getHealthyCosts(healthPolicy);
             repairCost += healthCost;
             policyString = null;
 
             return repairType;
         }
         //-----------------------------------------------------------------------------------------------------------
-        //public Dictionary<int, ReapirType> GetHelathCompsPolicy(Model model, int faultComp, double timeLimit, double currTime)
+        //public HashSet<int> GetHelathCompsPolicy(Model model, int faultComp, double timeLimit, double currTime)
         //{
-        //    _currTime = currTime;
-        //    Dictionary<int, ReapirType> healthPolicy = RepairHealthComponents(model, faultComp, timeLimit);
-        //    return healthPolicy;
+        //    return _HealthComponentsReplaced;
         //}
         //-----------------------------------------------------------------------------------------------------------
-        private double repairHealth(Dictionary<int, ReapirType> healthPolicy)
+        private double getHealthyCosts(Dictionary<int, ReapirType> healthPolicy)
         {
             double totalCost = 0;
             foreach (var healthComp in healthPolicy)
             {
-                double currCost = _troubleshooter.repairComponent(healthComp.Key, healthComp.Value);
+                double currCost = _troubleshooter._model._components[healthComp.Key].getRepairCost(healthComp.Value);
                 totalCost += currCost;
             }
             return totalCost;
@@ -86,7 +86,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         private bool ShouldReplaceComp(Model model, int healthComp, double timeLimit)
         {
             _repairPolicy = new DFS_HybridRepairPolicy(_troubleshooter, _repairPolicy._nIntervals, healthComp);
-
+            _repairPolicy._Tlimit = timeLimit;
             List<Interval> compIntervals = _repairPolicy.createIntervals(_currTime, timeLimit, healthComp);
             double nextTime = compIntervals.First().Ur;
             List<Interval> intervalsCopy = new List<Interval>(compIntervals);
@@ -97,6 +97,8 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             compIntervals.RemoveAt(0);
 
             State ReplaceState = new State(nextTime, startState._currTime, false, startState, _troubleshooter);
+            ReplaceState._repairType = ReapirType.REPLACE; //הכרחי לפונקציה בתוך DFS
+
             double ExpecReplaceCost = _repairPolicy.computeCost(ReplaceState, compIntervals);
             ExpecReplaceCost += model._components[healthComp]._replaceCost;
 
@@ -108,6 +110,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             //startState = new State(_currTime, 0, false, null, _troubleshooter);
 
             State NoActionState = new State(nextTime, startState._currTime, false, startState, _troubleshooter);
+            NoActionState._repairType = ReapirType.NoAction; //הכרחי לפונקציה בתוך DFS
             double ExpecNoActionCost = _repairPolicy.computeCost(NoActionState, compIntervals);
 
             _troubleshooter._model.updateComps(startState._comps);

@@ -13,7 +13,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
         TroubleShooter _troubleshooter;
         List<ReapirType> _actions;
         double _intervalLength;
-        double _Tlimit;
+        public double _Tlimit;
         double _realityTime;
         double _firstInterval;
         int _compId;
@@ -128,7 +128,7 @@ namespace AnticipatoryTroubleShooting.Troubleshooting
             double lower = state._prevTime;
             double up = state._currTime;
             double prevAge;
-            if (state._parent._decisionNode)
+            if (state._parent._decisionNode && state._repairType != ReapirType.NoAction)
                 prevAge = 0;
             else
                 prevAge = state._parent._comps[compID]._age;

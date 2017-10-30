@@ -239,5 +239,13 @@ namespace AnticipatoryTroubleShooting
 
         //--------------------------------------------------------------------------------------------------------------
 
+        public static KeyValuePair<int, double> getMinValueFromDic(Dictionary<int, double> dic)
+        {
+            var minTime = dic.Select(item => Convert.ToDouble(item.Value)).Min();
+            var element = dic.First(kvp => kvp.Value == Convert.ToDouble(minTime));
+
+            return element; 
+        }
+
     }
 }
